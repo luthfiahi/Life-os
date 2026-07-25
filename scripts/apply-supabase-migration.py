@@ -1,127 +1,83 @@
 import psycopg2
 import sys
 
-# Supabase Connection Pooler (IPv4 accessible)
-db_host = "aws-0-ap-southeast-1.pooler.supabase.com"
-db_port = 6543
-db_name = "postgres"
-db_user = "postgres.osxumulwfgupvtognrzm"
-db_pass = "YW8omMhc52fK1jym"
+# ap-southeast-2 pooler
+conn = psycopg2.connect(
+    host="aws-0-ap-southeast-2.pooler.supabase.com",
+    port=6543,
+    dbname="postgres",
+    user="postgres.osxumulwfgupvtognrzm",
+    password="YW8omMhc52fK1jym",
+    sslmode="require",
+    connect_timeout=15
+)
+conn.autocommit = True
+cur = conn.cursor()
+print("Connected to Supabase (ap-southeast-2)!")
 
-conn = None
-cur = None
+sql_path = "/home/z/my-project/supabase/migrations/20260726_wealth_foundation.sql"
+with open(sql_path, "r") as f:
+    sql = f.read()
 
-try:
-    print(f"Connecting to Supabase Pooler ({db_host}:{db_port})...")
-    conn = psycopg2.connect(
-        host=db_host,
-        port=db_port,
-        dbname=db_name,
-        user=db_user,
-        password=db_pass,
-        sslmode="require",
-        connect_timeout=15
-    )
-    conn.autocommit = True
-    cur = conn.cursor()
-    print("Connected successfully!\n")
+print("Applying migration...")
+cur.execute(sql)
+print("Migration applied!")
 
-    # Read the SQL migration file
-    sql_path = "/home/z/my-project/supabase/migrations/20260726_wealth_foundation.sql"
-    with open(sql_path, "r") as f:
-        sql_content = f.read()
+# Verify
+cur.execute("""
+    SELECT table_name FROM information_schema.tables 
+    WHERE table_schema='public' 
+    AND table_name IN ('accounts','categories','transactions','budgets')
+    ORDER BY table_name;
+""")
+tables = [t[0] for t in cur.fetchall()]
+print(f"\nVerified tables: {tables}")
 
-    print(f"Read migration file: {len(sql_content)} chars")
-    print("Applying migration...\n")
+for tbl in ['accounts','categories','transactions','budgets']:
+    cur.execute("SELECT relrowsecurity FROM pg_class WHERE relname=%s", (tbl,))
+    rls = cur.fetchone()
+    status = "ENABLED" if rls and rls[0] else "DISABLED"
+    print(f"  {tbl}: RLS {status}")
 
-    cur.execute(sql_content)
-    print("Migration applied successfully!\n")
+cur.execute("""
+    SELECT tablename, policyname FROM pg_policies 
+    WHERE schemaname='public'
+    AND tablename IN ('accounts','categories','transactions','budgets')
+    ORDER BY tablename, policyname;
+""")
+policies = cur.fetchall()
+print(f"\nRLS Policies ({len(policies)}):")
+for p in policies:
+    print(f"  {p[0]}.{p[1]}")
 
-    # Verify tables were created
-    cur.execute("""
-        SELECT table_name 
-        FROM information_schema.tables 
-        WHERE table_schema = 'public' 
-        AND table_name IN ('accounts', 'categories', 'transactions', 'budgets')
-        ORDER BY table_name;
-    """)
-    tables = cur.fetchall()
-    print("Verified tables in Supabase:")
-    for t in tables:
-        print(f"  [OK] {t[0]}")
+cur.execute("""
+    SELECT tablename, indexname FROM pg_indexes 
+    WHERE schemaname='public'
+    AND tablename IN ('accounts','categories','transactions','budgets')
+    AND indexname LIKE 'idx_%'
+    ORDER BY tablename, indexname;
+""")
+indexes = cur.fetchall()
+print(f"\nIndexes ({len(indexes)}):")
+for i in indexes:
+    print(f"  {i[0]}.{i[1]}")
 
-    # Check RLS is enabled
-    print("\nRLS Status:")
-    for tbl in ['accounts', 'categories', 'transactions', 'budgets']:
-        cur.execute("""
-            SELECT relrowsecurity FROM pg_class WHERE relname = %s;
-        """, (tbl,))
-        rls = cur.fetchone()
-        status = "ENABLED" if rls and rls[0] else "DISABLED"
-        print(f"  {tbl}: RLS {status}")
+cur.execute("""
+    SELECT event_object_table, trigger_name 
+    FROM information_schema.triggers 
+    WHERE trigger_schema='public'
+    AND event_object_table IN ('accounts','categories','transactions','budgets')
+    ORDER BY event_object_table;
+""")
+triggers = cur.fetchall()
+print(f"\nTriggers ({len(triggers)}):")
+for t in triggers:
+    print(f"  {t[0]}.{t[1]}")
 
-    # Count policies
-    print("\nRLS Policies:")
-    cur.execute("""
-        SELECT schemaname, tablename, policyname 
-        FROM pg_policies 
-        WHERE schemaname = 'public'
-        AND tablename IN ('accounts', 'categories', 'transactions', 'budgets')
-        ORDER BY tablename, policyname;
-    """)
-    policies = cur.fetchall()
-    for p in policies:
-        print(f"  [OK] {p[1]}.{p[2]}")
-    print(f"  Total: {len(policies)} policies")
+cur.execute("SELECT proname FROM pg_proc WHERE proname='update_updated_at_column' AND pronamespace='public'::regnamespace")
+func = cur.fetchone()
+print(f"\nFunction: update_updated_at_column = {'FOUND' if func else 'MISSING'}")
 
-    # Check indexes
-    print("\nIndexes:")
-    cur.execute("""
-        SELECT tablename, indexname 
-        FROM pg_indexes 
-        WHERE schemaname = 'public'
-        AND tablename IN ('accounts', 'categories', 'transactions', 'budgets')
-        AND indexname LIKE 'idx_%'
-        ORDER BY tablename, indexname;
-    """)
-    indexes = cur.fetchall()
-    for idx in indexes:
-        print(f"  [OK] {idx[0]}.{idx[1]}")
-    print(f"  Total: {len(indexes)} indexes")
-
-    # Check triggers
-    print("\nTriggers:")
-    cur.execute("""
-        SELECT event_object_table, trigger_name 
-        FROM information_schema.triggers 
-        WHERE trigger_schema = 'public'
-        AND event_object_table IN ('accounts', 'categories', 'transactions', 'budgets')
-        ORDER BY event_object_table;
-    """)
-    triggers = cur.fetchall()
-    for tr in triggers:
-        print(f"  [OK] {tr[0]}.{tr[1]}")
-    print(f"  Total: {len(triggers)} triggers")
-
-    # Check function
-    cur.execute("""
-        SELECT proname FROM pg_proc WHERE proname = 'update_updated_at_column' AND pronamespace = 'public'::regnamespace;
-    """)
-    func = cur.fetchone()
-    print(f"\nFunction: update_updated_at_column = {'FOUND' if func else 'MISSING'}")
-
-    print("\n========================================")
-    print("  ALL MIGRATION APPLIED SUCCESSFULLY")
-    print("========================================")
-
-except Exception as e:
-    print(f"ERROR: {e}", file=sys.stderr)
-    import traceback
-    traceback.print_exc()
-    sys.exit(1)
-finally:
-    if cur:
-        cur.close()
-    if conn:
-        conn.close()
-        print("\nConnection closed.")
+print("\n=== ALL DONE ===")
+cur.close()
+conn.close()

@@ -92,7 +92,7 @@ CREATE INDEX IF NOT EXISTS idx_transactions_account_id ON public.transactions(ac
 CREATE INDEX IF NOT EXISTS idx_transactions_category_id ON public.transactions(category_id);
 CREATE INDEX IF NOT EXISTS idx_transactions_date ON public.transactions(user_id, date DESC);
 CREATE INDEX IF NOT EXISTS idx_transactions_type ON public.transactions(user_id, type);
-CREATE INDEX IF NOT EXISTS idx_transactions_monthly ON public.transactions(user_id, date_trunc('month', date));
+CREATE INDEX IF NOT EXISTS idx_transactions_monthly ON public.transactions(user_id, date_trunc('month', date::timestamp));
 
 ALTER TABLE public.transactions ENABLE ROW LEVEL SECURITY;
 
