@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    @page { size: 794px 1123px; margin: 0; }
+    :root {
+      --c-bg: #f7f6f6;
+      --c-accent: #a5872c;
+      --c-text: #161614;
+      --c-muted: #8b8982;
+      --c-mid: #7a6d45;
+      --c-surface: #eae8e4;
+      --c-border: #cac1a7;
+    }
+    html, body {
+      margin: 0; padding: 0;
+      width: 794px; height: 1123px;
+      background: var(--c-bg);
+      color: var(--c-text);
+      font-family: 'Inter', sans-serif;
+    }
+    @media screen {
+      html { height: auto; display: flex; justify-content: center; min-height: 100vh; background: var(--c-bg); }
+      body { transform-origin: top center; scale: min(1, calc(100vw / 794), calc(100vh / 1123)); margin: 0 auto; box-shadow: 0 0 60px rgba(0,0,0,0.3); }
+    }
+    .cover {
+      width: 794px; height: 1123px;
+      position: relative;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+    .grid-bg {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(121,109,69,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(121,109,69,0.04) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+    .anchor-line {
+      position: absolute;
+      left: 85px;
+      top: 160px;
+      bottom: 150px;
+      width: 5px;
+      background: var(--c-accent);
+    }
+    .content {
+      position: absolute;
+      left: 140px;
+      right: 60px;
+      top: 0;
+      bottom: 0;
+    }
+    .kicker {
+      position: absolute;
+      top: 180px;
+      font-size: 11pt;
+      font-weight: 500;
+      color: var(--c-muted);
+      letter-spacing: 3pt;
+      text-transform: uppercase;
+    }
+    .title {
+      position: absolute;
+      top: 260px;
+      font-size: 52pt;
+      font-weight: 800;
+      line-height: 1.15;
+      color: var(--c-text);
+      max-width: 520px;
+      letter-spacing: -1pt;
+    }
+    .title .accent {
+      color: var(--c-accent);
+    }
+    .summary {
+      position: absolute;
+      top: 530px;
+      font-size: 14pt;
+      line-height: 1.7;
+      color: var(--c-text);
+      opacity: 0.75;
+      max-width: 440px;
+    }
+    .meta {
+      position: absolute;
+      top: 780px;
+      font-size: 12pt;
+      color: var(--c-muted);
+      line-height: 1.8;
+    }
+    .meta strong {
+      color: var(--c-text);
+      font-weight: 600;
+    }
+    .badge {
+      display: inline-block;
+      background: var(--c-accent);
+      color: white;
+      padding: 4px 14px;
+      border-radius: 4px;
+      font-size: 10pt;
+      font-weight: 600;
+      letter-spacing: 1pt;
+      text-transform: uppercase;
+      margin-top: 12px;
+    }
+    .footer-line {
+      position: absolute;
+      bottom: 80px;
+      left: 135px;
+      right: 60px;
+      height: 1px;
+      background: var(--c-border);
+      opacity: 0.5;
+    }
+    .footer {
+      position: absolute;
+      bottom: 20px;
+      left: 135px;
+      right: 60px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 9pt;
+      color: var(--c-muted);
+      letter-spacing: 1pt;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <div class="cover">
+    <div class="grid-bg"></div>
+    <div class="anchor-line"></div>
+    <div class="content">
+      <div class="kicker">Sprint Review Document</div>
+      <div class="title">Life OS<br><span class="accent">Sprint 1</span><br>Review</div>
+      <div class="summary">
+        Foundation sprint: authentication, design system, component library, dan arsitektur aplikasi.
+        Dokumen review teknis untuk Software Architect dan QA.
+      </div>
+      <div class="meta">
+        <strong>Status:</strong> APPROVED (9.8/10)<br>
+        <strong>Reviewer:</strong> CTO<br>
+        <strong>Tanggal:</strong> 26 Juli 2026
+      </div>
+      <div class="badge">Foundation Complete</div>
+    </div>
+    <div class="footer-line"></div>
+    <div class="footer">
+      <span>Life OS Project</span>
+      <span>Sprint 1 / 10</span>
+    </div>
+  </div>
+</body>
+</html>
