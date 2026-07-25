@@ -64,15 +64,15 @@ export default function DashboardPage() {
       {/* Widget Grid — 4 columns on desktop */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-auto">
         {/* Row 1-2: Life Score | Today's Focus | Quick Actions */}
-        <LifeScoreWidget colSpan={1} rowSpan={2} />
-        <TodayFocusWidget colSpan={1} rowSpan={2} />
-        <QuickActionsWidget colSpan={2} rowSpan={1} />
+        <LifeScoreWidget />
+        <TodayFocusWidget />
+        <QuickActionsWidget />
 
         {/* Row 2 right: AI Coach */}
-        <AICoachWidget colSpan={2} rowSpan={1} />
+        <AICoachWidget />
 
         {/* Row 3-4: Recent Activity | Snapshot Cards */}
-        <RecentActivityWidget colSpan={1} rowSpan={2} />
+        <RecentActivityWidget />
         <WealthSnapshotConnected />
       </div>
     </div>

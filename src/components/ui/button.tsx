@@ -29,9 +29,12 @@ const buttonVariants = cva(
           'bg-transparent text-[var(--c-accent)] hover:bg-[var(--c-accent)]/10 active:scale-[0.98]',
         destructive:
           'bg-[var(--c-accent-2)] text-white hover:bg-[var(--c-accent-2)]/90 active:scale-[0.98]',
+        outline:
+          'bg-transparent text-[var(--c-text)] border border-[var(--c-border)] hover:bg-[var(--c-surface)] active:scale-[0.98]',
       },
       size: {
         sm: 'h-8 px-3 text-xs rounded-[var(--radius-sm)]',
+        default: 'h-9 px-4 text-sm rounded-[var(--radius-md)]',
         md: 'h-9 px-4 text-sm rounded-[var(--radius-md)]',
         lg: 'h-10 px-6 text-base rounded-[var(--radius-md)]',
         icon: 'h-9 w-9 rounded-[var(--radius-md)]',

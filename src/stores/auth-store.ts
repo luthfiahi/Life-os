@@ -32,6 +32,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     try {
       const supabase = createClient()
+      if (!supabase) {
+        set({ loading: false, initialized: true })
+        return
+      }
       const {
         data: { session },
       } = await supabase.auth.getSession()
@@ -60,6 +64,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ loading: true, error: null })
     try {
       const supabase = createClient()
+      if (!supabase) {
+        set({ error: 'Supabase not configured', loading: false })
+        throw new Error('Supabase not configured')
+      }
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -84,6 +92,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   signInWithOAuth: async (provider: 'google' | 'github') => {
     const supabase = createClient()
+    if (!supabase) throw new Error('Supabase not configured')
     await supabase.auth.signInWithOAuth({
       provider,
       options: { redirectTo: `${window.location.origin}/auth/callback` },
@@ -92,6 +101,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   signOut: async () => {
     const supabase = createClient()
+    if (!supabase) return
     await supabase.auth.signOut()
     set({ user: null, session: null, error: null })
   },
