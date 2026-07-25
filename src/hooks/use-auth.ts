@@ -23,6 +23,12 @@ export function useAuth() {
   const supabase = createClient()
 
   useEffect(() => {
+    // Dev sandbox mode: no Supabase client available
+    if (!supabase) {
+      setState({ user: null, session: null, loading: false, error: null })
+      return
+    }
+
     // Get initial session
     const getSession = async () => {
       try {
@@ -70,6 +76,7 @@ export function useAuth() {
 
   const signInWithEmail = useCallback(
     async (email: string, password: string) => {
+      if (!supabase) return { data: null, error: { message: 'Supabase not configured' } as any }
       setState((prev) => ({ ...prev, loading: true, error: null }))
 
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -97,6 +104,7 @@ export function useAuth() {
 
   const signUpWithEmail = useCallback(
     async (email: string, password: string, fullName: string) => {
+      if (!supabase) return { data: null, error: { message: 'Supabase not configured' } as any }
       setState((prev) => ({ ...prev, loading: true, error: null }))
 
       const { data, error } = await supabase.auth.signUp({
@@ -121,6 +129,7 @@ export function useAuth() {
   )
 
   const signOut = useCallback(async () => {
+    if (!supabase) return
     setState((prev) => ({ ...prev, loading: true }))
 
     const { error } = await supabase.auth.signOut()

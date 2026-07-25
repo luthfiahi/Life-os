@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { margin: 0; padding: 0; width: 794px; height: 1123px; background: #f5f4f3; font-family: 'Inter', 'Noto Sans SC', sans-serif; }
+.cover-page { position: relative; width: 794px; height: 1123px; overflow: hidden; }
+
+/* Layer 0 - Base */
+.cover-base { position: absolute; inset: 0; z-index: 0; background: #f5f4f3; }
+
+/* Layer 1 - Background */
+.cover-bg { position: absolute; inset: 0; z-index: 1; overflow: hidden; }
+.deco-block { position: absolute; right: 80px; top: 320px; width: 140px; height: 140px; border: 2px solid #cfcabc; opacity: 0.25; border-radius: 8px; }
+.deco-block-2 { position: absolute; right: 120px; top: 370px; width: 80px; height: 80px; border: 1px solid #cfcabc; opacity: 0.15; border-radius: 4px; }
+.deco-accent-line { position: absolute; right: 80px; top: 740px; width: 140px; height: 3px; background: #917521; opacity: 0.3; border-radius: 2px; }
+
+/* Layer 2 - Structure */
+.cover-structure { position: absolute; inset: 0; z-index: 2; }
+.anchor-line { position: absolute; left: 96px; top: 112px; bottom: 112px; width: 6px; background: #5c5543; }
+
+/* Layer 3 - Content */
+.cover-content { position: absolute; inset: 0; z-index: 3; }
+
+.kicker { position: absolute; left: 148px; top: 170px; font-size: 15pt; font-weight: 400; letter-spacing: 3pt; text-transform: uppercase; color: #5c5543; opacity: 0.55; }
+.hero-title { position: absolute; left: 148px; top: 340px; max-width: 485px; font-size: 50pt; font-weight: 900; line-height: 1.15; color: #1e1d1b; }
+.hero-title .accent { color: #917521; }
+.summary { position: absolute; left: 148px; top: 565px; max-width: 465px; font-size: 13.5pt; font-weight: 400; line-height: 1.7; color: #5c5543; opacity: 0.7; }
+.meta { position: absolute; left: 148px; top: 845px; font-size: 11.5pt; font-weight: 400; line-height: 1.8; color: #89867f; }
+.meta .label { color: #5c5543; font-weight: 600; }
+.footer { position: absolute; left: 148px; bottom: 95px; font-size: 10pt; font-weight: 400; letter-spacing: 2pt; text-transform: uppercase; color: #89867f; opacity: 0.5; }
+
+@media screen {
+  html { height: auto; display: flex; justify-content: center; }
+  body { transform-origin: top center; scale: min(1, calc(100vh / 1123)); margin: 0 auto; }
+}
+</style>
+</head>
+<body>
+<div class="cover-page">
+  <div class="cover-base"></div>
+  <div class="cover-bg">
+    <div class="deco-block"></div>
+    <div class="deco-block-2"></div>
+    <div class="deco-accent-line"></div>
+  </div>
+  <div class="cover-structure">
+    <div class="anchor-line"></div>
+  </div>
+  <div class="cover-content">
+    <div class="kicker">Sprint 2 Review Document</div>
+    <div class="hero-title">Life OS<br/><span class="accent">Dashboard</span><br/>Command Center</div>
+    <div class="summary">Comprehensive review of Sprint 2 deliverables: 6 interactive widgets, responsive grid layout, mock data layer, and the complete Dashboard Command Center with zero errors across all quality gates.</div>
+    <div class="meta">
+      <span class="label">Project:</span> Life OS - Personal Operating System<br/>
+      <span class="label">Sprint:</span> 2 of 10<br/>
+      <span class="label">Date:</span> 26 July 2026<br/>
+      <span class="label">Stack:</span> Next.js 15 / TypeScript / Tailwind CSS 4<br/>
+      <span class="label">Status:</span> DONE - Zero Errors
+    </div>
+    <div class="footer">Life OS Engineering Team</div>
+  </div>
+</div>
+</body>
+</html>

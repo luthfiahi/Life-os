@@ -1,0 +1,7 @@
+export { WidgetCard } from './widget-card'
+export { LifeScoreWidget } from './life-score-widget'
+export { TodayFocusWidget } from './today-focus-widget'
+export { QuickActionsWidget } from './quick-actions-widget'
+export { SnapshotCardsWidget } from './snapshot-cards-widget'
+export { RecentActivityWidget } from './recent-activity-widget'
+export { AICoachWidget } from './ai-coach-widget'

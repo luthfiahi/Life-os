@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { cn } from '@/lib/utils'
 import { Sidebar } from './sidebar'
 import { Header } from './header'
@@ -24,19 +24,18 @@ export function AppShell({ children, title }: AppShellProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
-  // Close mobile menu on route change (handled by sidebar links)
-  useEffect(() => {
-    setMobileMenuOpen(false)
-  }, [])
-
   // Handle sidebar toggle
   const handleSidebarToggle = () => {
     setSidebarCollapsed((prev) => !prev)
   }
 
-  const handleMobileMenuToggle = () => {
+  const handleMobileMenuToggle = useCallback(() => {
     setMobileMenuOpen((prev) => !prev)
-  }
+  }, [])
+
+  const closeMobileMenu = useCallback(() => {
+    setMobileMenuOpen(false)
+  }, [])
 
   return (
     <div className="min-h-screen bg-[var(--c-bg)]">
@@ -71,7 +70,7 @@ export function AppShell({ children, title }: AppShellProps) {
       {mobileMenuOpen && (
         <div
           className="fixed inset-0 z-[var(--z-overlay)] bg-black/50 lg:hidden animate-fade-in"
-          onClick={() => setMobileMenuOpen(false)}
+          onClick={closeMobileMenu}
           aria-hidden="true"
         />
       )}
