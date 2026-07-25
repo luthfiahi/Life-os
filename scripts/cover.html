@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    @page { size: 210mm 297mm; margin: 0; }
+    html, body { margin: 0; padding: 0; width: 210mm; height: 297mm; background: #f7f6f6; }
+    .cover-page {
+      position: relative;
+      width: 794px;
+      height: 1123px;
+      overflow: hidden;
+    }
+    .cover-bg { position: absolute; inset: 0; background: #f7f6f6; z-index: 0; }
+    .cover-layer-1 {
+      position: absolute; inset: 0;
+      overflow: hidden;
+      z-index: 1;
+    }
+    .grid-pattern {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(93,84,57,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(93,84,57,0.04) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+    .anchor-line {
+      position: absolute;
+      left: 95px;
+      top: 112px;
+      bottom: 112px;
+      width: 6px;
+      background: #5d5439;
+    }
+    .corner-mark-tr {
+      position: absolute;
+      top: 40px;
+      right: 40px;
+      width: 30px;
+      height: 30px;
+      border-top: 2px solid #bfb9a8;
+      border-right: 2px solid #bfb9a8;
+    }
+    .corner-mark-bl {
+      position: absolute;
+      bottom: 40px;
+      left: 40px;
+      width: 30px;
+      height: 30px;
+      border-bottom: 2px solid #bfb9a8;
+      border-left: 2px solid #bfb9a8;
+    }
+    .cover-layer-3 { position: absolute; inset: 0; z-index: 3; }
+    .kicker {
+      position: absolute;
+      left: 150px;
+      top: 175px;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(35,34,32,0.5);
+    }
+    .hero-line {
+      position: absolute;
+      left: 150px;
+      font-family: 'Inter', sans-serif;
+      font-size: 56px;
+      font-weight: 900;
+      line-height: 1.1;
+      color: #232220;
+    }
+    .hero-l1 { top: 220px; }
+    .hero-l2 { top: 282px; }
+    .hero-l3 { top: 344px; color: #8b7227; }
+    .summary-block {
+      position: absolute;
+      left: 150px;
+      top: 520px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1.7;
+      color: rgba(35,34,32,0.7);
+      max-width: 440px;
+    }
+    .meta-block {
+      position: absolute;
+      left: 150px;
+      top: 700px;
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 400;
+      color: rgba(35,34,32,0.5);
+      line-height: 2.0;
+    }
+    .meta-block strong { font-weight: 600; color: rgba(35,34,32,0.75); }
+    .footer-text {
+      position: absolute;
+      left: 150px;
+      bottom: 50px;
+      font-family: 'Inter', sans-serif;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(35,34,32,0.3);
+    }
+    .sprint-num {
+      display: inline-block;
+      padding: 3px 12px;
+      background: rgba(139,114,39,0.12);
+      border: 1px solid rgba(139,114,39,0.3);
+      border-radius: 4px;
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: #8b7227;
+      letter-spacing: 1px;
+      margin-left: 10px;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+  <div class="cover-page">
+    <div class="cover-bg"></div>
+    <div class="cover-layer-1">
+      <div class="grid-pattern"></div>
+      <div class="anchor-line"></div>
+      <div class="corner-mark-tr"></div>
+      <div class="corner-mark-bl"></div>
+    </div>
+    <div class="cover-layer-3">
+      <div class="kicker">Life OS Engineering Review <span class="sprint-num">SPRINT 3</span></div>
+      <div class="hero-line hero-l1">Wealth</div>
+      <div class="hero-line hero-l2">Foundation</div>
+      <div class="hero-line hero-l3">Review</div>
+      <div class="summary-block">
+        Comprehensive review of the Wealth Foundation sprint covering database schema, repository pattern, service layer, TanStack Query integration, and dashboard connectivity with real Supabase data.
+      </div>
+      <div class="meta-block">
+        <strong>Project:</strong> Life OS - Personal Operating System<br/>
+        <strong>Sprint:</strong> 3 of N<br/>
+        <strong>Date:</strong> 26 Juli 2026<br/>
+        <strong>Status:</strong> APPROVED
+      </div>
+      <div class="footer-text">Life OS v1.2 - Confidential</div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    @page { size: 210mm 297mm; margin: 0; }
+    html, body { margin: 0; padding: 0; width: 210mm; height: 297mm; background: #f7f6f6; }
+
+    .cover-page {
+      position: relative;
+      width: 794px; /* 210mm at 96dpi */
+      height: 1123px; /* 297mm at 96dpi */
+      overflow: hidden;
+    }
+
+    /* Layer 0 - Background */
+    .cover-bg {
+      position: absolute; inset: 0;
+      background: #f7f6f6;
+      z-index: 0;
+    }
+
+    /* Layer 1 - Grid pattern + decorative */
+    .cover-layer-1 {
+      position: absolute; inset: 0;
+      overflow: hidden;
+      z-index: 1;
+    }
+    .grid-pattern {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(93,84,57,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(93,84,57,0.04) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+    .anchor-line {
+      position: absolute;
+      left: 95px; /* 0.12 * 794 */
+      top: 112px; /* 0.1 * 1123 */
+      bottom: 112px; /* 0.1 * 1123 */
+      width: 6px;
+      background: #5d5439;
+    }
+    .corner-mark-top {
+      position: absolute;
+      top: 40px;
+      right: 40px;
+      width: 30px;
+      height: 30px;
+      border-top: 2px solid #bfb9a8;
+      border-right: 2px solid #bfb9a8;
+    }
+    .corner-mark-bottom {
+      position: absolute;
+      bottom: 40px;
+      left: 40px;
+      width: 30px;
+      height: 30px;
+      border-bottom: 2px solid #bfb9a8;
+      border-left: 2px solid #bfb9a8;
+    }
+
+    /* Layer 2 - Structural */
+    .cover-layer-2 {
+      position: absolute; inset: 0;
+      z-index: 2;
+    }
+
+    /* Layer 3 - Content */
+    .cover-layer-3 {
+      position: absolute; inset: 0;
+      z-index: 3;
+    }
+    .content-area {
+      position: absolute;
+      left: 145px; /* 0.12*794 + 50pt */
+      top: 0;
+      right: 60px;
+      bottom: 0;
+    }
+    .kicker {
+      position: absolute;
+      top: 170px; /* 0.15 * 1123 */
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(35,34,32,0.55);
+    }
+    .hero-title {
+      position: absolute;
+      top: 300px;
+      font-family: 'Inter', sans-serif;
+      font-size: 44px;
+      font-weight: 900;
+      line-height: 1.2;
+      color: #232220;
+      max-width: 500px;
+    }
+    .hero-title .accent {
+      color: #8b7227;
+    }
+    .summary {
+      position: absolute;
+      top: 580px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 400;
+      line-height: 1.7;
+      color: rgba(35,34,32,0.75);
+      max-width: 440px;
+    }
+    .meta {
+      position: absolute;
+      top: 720px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 400;
+      color: rgba(35,34,32,0.55);
+      line-height: 1.8;
+    }
+    .meta strong {
+      font-weight: 600;
+      color: rgba(35,34,32,0.8);
+    }
+    .footer {
+      position: absolute;
+      bottom: 50px;
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(35,34,32,0.35);
+    }
+    .sprint-badge {
+      position: absolute;
+      top: 240px;
+      left: 0;
+      display: inline-block;
+      padding: 4px 14px;
+      background: rgba(139,114,39,0.1);
+      border: 1px solid rgba(139,114,39,0.25);
+      border-radius: 4px;
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: #8b7227;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+  <div class="cover-page">
+    <!-- Layer 0 -->
+    <div class="cover-bg"></div>
+
+    <!-- Layer 1 -->
+    <div class="cover-layer-1">
+      <div class="grid-pattern"></div>
+      <div class="anchor-line"></div>
+      <div class="corner-mark-top"></div>
+      <div class="corner-mark-bottom"></div>
+    </div>
+
+    <!-- Layer 2 -->
+    <div class="cover-layer-2">
+      <div class="divider-line"></div>
+    </div>
+
+    <!-- Layer 3 -->
+    <div class="cover-layer-3">
+      <div class="content-area">
+        <div class="kicker">Life OS Engineering Review</div>
+        <div class="sprint-badge">SPRINT 3</div>
+        <div class="hero-title">
+          Wealth<br/>Foundation<br/><span class="accent">Review</span>
+        </div>
+        <div class="summary">
+          Comprehensive review of the Wealth Foundation sprint covering database schema, repository pattern, service layer, TanStack Query integration, and dashboard connectivity with real Supabase data.
+        </div>
+        <div class="meta">
+          <strong>Project:</strong> Life OS - Personal Operating System<br/>
+          <strong>Sprint:</strong> 3 of N<br/>
+          <strong>Date:</strong> 26 Juli 2026<br/>
+          <strong>Status:</strong> APPROVED
+        </div>
+        <div class="footer">Life OS v1.2 - Confidential</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

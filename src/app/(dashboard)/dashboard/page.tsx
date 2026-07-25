@@ -5,14 +5,17 @@ import {
   LifeScoreWidget,
   TodayFocusWidget,
   QuickActionsWidget,
-  SnapshotCardsWidget,
+  WealthSnapshotConnected,
   RecentActivityWidget,
   AICoachWidget,
 } from '@/components/dashboard'
 
 /**
- * Life OS — Dashboard Command Center (Sprint 2)
+ * Life OS — Dashboard Command Center (Sprint 2 → Sprint 3)
  * Route: /dashboard
+ *
+ * Sprint 3 update: Wealth Snapshot card now uses real Supabase data.
+ * All other widgets continue using mock data.
  *
  * Widget grid layout:
  * Row 1:  [Life Score (tall)]  [Today's Focus (tall)]  [Quick Actions (wide)]
@@ -70,7 +73,7 @@ export default function DashboardPage() {
 
         {/* Row 3-4: Recent Activity | Snapshot Cards */}
         <RecentActivityWidget colSpan={1} rowSpan={2} />
-        <SnapshotCardsWidget colSpan={3} rowSpan={1} />
+        <WealthSnapshotConnected />
       </div>
     </div>
   )

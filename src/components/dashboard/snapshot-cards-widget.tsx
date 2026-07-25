@@ -35,15 +35,18 @@ const changeColors = {
 interface SnapshotCardsWidgetProps {
   cards?: SnapshotCard[]
   className?: string
+  /** Show skeleton loading state */
+  loading?: boolean
 }
 
-export function SnapshotCardsWidget({ cards = mockSnapshotCards, className }: SnapshotCardsWidgetProps) {
+export function SnapshotCardsWidget({ cards = mockSnapshotCards, className, loading }: SnapshotCardsWidgetProps) {
   return (
     <WidgetCard
       title="Snapshot"
       subtitle="Ringkasan cepat semua module"
       className={className}
       colSpan={2}
+      loading={loading}
     >
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {cards.map((card) => {

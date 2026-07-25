@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter, Playfair_Display, JetBrains_Mono } from 'next/font/google'
 import { ThemeProvider } from '@/components/providers/theme-provider'
+import { QueryProvider } from '@/components/providers/query-provider'
 import { Toaster } from 'sonner'
 import './globals.css'
 
@@ -43,7 +44,9 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
-          {children}
+          <QueryProvider>
+            {children}
+          </QueryProvider>
           <Toaster
             position="top-right"
             toastOptions={{

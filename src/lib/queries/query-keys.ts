@@ -1,0 +1,86 @@
+/**
+ * Life OS — TanStack Query Key Factory
+ *
+ * Centralized query key management.
+ * All query keys are defined here to prevent key collisions
+ * and enable targeted cache invalidation.
+ *
+ * Pattern: [domain, entity, ...identifiers, filters]
+ *
+ * Usage:
+ *   queryKey: wealthKeys.snapshot(userId)
+ *   invalidate: queryClient.invalidateQueries({ queryKey: wealthKeys.all() })
+ */
+
+export const wealthKeys = {
+  /** Base key for all wealth queries */
+  all: ['wealth'] as const,
+
+  /** Accounts */
+  accounts: (userId: string) => [...wealthKeys.all, 'accounts', userId] as const,
+  accountList: (userId: string, filters?: { active?: boolean }) =>
+    [...wealthKeys.accounts(userId), 'list', filters] as const,
+  accountDetail: (userId: string, id: string) =>
+    [...wealthKeys.accounts(userId), 'detail', id] as const,
+
+  /** Categories */
+  categories: (userId: string) => [...wealthKeys.all, 'categories', userId] as const,
+  categoryList: (userId: string, type?: 'income' | 'expense') =>
+    [...wealthKeys.categories(userId), 'list', type] as const,
+
+  /** Transactions */
+  transactions: (userId: string) => [...wealthKeys.all, 'transactions', userId] as const,
+  transactionList: (userId: string, filters?: { limit?: number; offset?: number }) =>
+    [...wealthKeys.transactions(userId), 'list', filters] as const,
+  transactionByDateRange: (userId: string, start: string, end: string) =>
+    [...wealthKeys.transactions(userId), 'date-range', start, end] as const,
+
+  /** Budgets */
+  budgets: (userId: string) => [...wealthKeys.all, 'budgets', userId] as const,
+  budgetList: (userId: string, filters?: { active?: boolean }) =>
+    [...wealthKeys.budgets(userId), 'list', filters] as const,
+
+  /** Dashboard Snapshot — the primary Sprint 3 query */
+  snapshot: (userId: string) => [...wealthKeys.all, 'snapshot', userId] as const,
+
+  /** Budget Utilization detail */
+  budgetUtilization: (userId: string, year: number, month: number) =>
+    [...wealthKeys.all, 'budget-utilization', userId, year, month] as const,
+}
+
+/**
+ * Invalidation helpers — use after mutations to refresh related queries.
+ *
+ * Example:
+ *   after creating a transaction:
+ *   invalidateWealthQueries(queryClient, userId, ['transactions', 'snapshot'])
+ */
+export function invalidateWealthQueries(
+  queryClient: import('@tanstack/react-query').QueryClient,
+  userId: string,
+  scopes: Array<'accounts' | 'categories' | 'transactions' | 'budgets' | 'snapshot'>,
+) {
+  for (const scope of scopes) {
+    switch (scope) {
+      case 'accounts':
+        queryClient.invalidateQueries({ queryKey: wealthKeys.accounts(userId) })
+        break
+      case 'categories':
+        queryClient.invalidateQueries({ queryKey: wealthKeys.categories(userId) })
+        break
+      case 'transactions':
+        queryClient.invalidateQueries({ queryKey: wealthKeys.transactions(userId) })
+        break
+      case 'budgets':
+        queryClient.invalidateQueries({ queryKey: wealthKeys.budgets(userId) })
+        break
+      case 'snapshot':
+        queryClient.invalidateQueries({ queryKey: wealthKeys.snapshot(userId) })
+        break
+    }
+  }
+  // Always invalidate snapshot when any wealth data changes
+  if (!scopes.includes('snapshot')) {
+    queryClient.invalidateQueries({ queryKey: wealthKeys.snapshot(userId) })
+  }
+}
