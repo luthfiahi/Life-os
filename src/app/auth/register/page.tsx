@@ -1,10 +1,13 @@
 import { RegisterForm } from '@/components/auth/register-form'
 
+export const dynamic = 'force-dynamic'
+
 /**
  * Life OS — Register Page
  * Route: /auth/register
- * 
+ *
  * Public page for user registration.
+ * Dynamic: not prerendered (needs Supabase env vars at runtime).
  */
 
 export default function RegisterPage() {
