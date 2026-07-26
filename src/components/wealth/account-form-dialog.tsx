@@ -95,8 +95,9 @@ export function AccountFormDialog({ open, onOpenChange, account }: AccountFormDi
         })
       }
       onOpenChange(false)
-    } catch {
-      // Error handled by mutation
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Gagal menyimpan akun'
+      alert(msg)
     }
   }
 

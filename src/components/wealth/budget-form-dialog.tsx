@@ -87,8 +87,9 @@ export function BudgetFormDialog({ open, onOpenChange, budget }: BudgetFormDialo
         await createBudget.mutateAsync({ user_id: user.id, ...values })
       }
       onOpenChange(false)
-    } catch {
-      // Error handled by mutation
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Gagal menyimpan budget'
+      alert(msg)
     }
   }
 

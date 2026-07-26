@@ -127,8 +127,9 @@ export function TransactionFormDialog({ open, onOpenChange, transaction, default
       setValue('category_id', newCat.id)
       setNewCategoryName('')
       setShowNewCategory(false)
-    } catch {
-      // Error handled by mutation
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Gagal menambah kategori'
+      alert(msg)
     }
   }
 
@@ -147,8 +148,9 @@ export function TransactionFormDialog({ open, onOpenChange, transaction, default
         })
       }
       onOpenChange(false)
-    } catch {
-      // Error handled by mutation
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Gagal menyimpan transaksi'
+      alert(msg)
     }
   }
 
