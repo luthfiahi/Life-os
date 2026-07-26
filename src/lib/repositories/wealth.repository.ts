@@ -409,3 +409,120 @@ export const budgetRepo = {
     if (error) throw new Error(`budgetRepo.delete: ${error.message}`)
   },
 }
+
+// ─── Analytics Repository (Sprint 5) ────────────────────────
+
+export const analyticsRepo = {
+  /** Get all transactions in a date range (for cash flow, trends) */
+  async findByDateRange(
+    userId: string,
+    startDate: string,
+    endDate: string,
+  ): Promise<TransactionRow[]> {
+    return transactionRepo.findByDateRange(userId, startDate, endDate)
+  },
+
+  /** Get total amount grouped by category for expense in a date range */
+  async getExpenseByCategory(
+    userId: string,
+    startDate: string,
+    endDate: string,
+  ): Promise<{ category_id: string; total: number }[]> {
+    const client = getClient()
+    if (!client) return []
+
+    const { data, error } = await client
+      .from('transactions')
+      .select('category_id, amount')
+      .eq('user_id', userId)
+      .eq('type', 'expense')
+      .gte('date', startDate)
+      .lte('date', endDate)
+      .not('category_id', 'is', null)
+
+    if (error) throw new Error(`analyticsRepo.getExpenseByCategory: ${error.message}`)
+    if (!data) return []
+
+    const map = new Map<string, number>()
+    for (const row of data) {
+      const catId = row.category_id as string
+      map.set(catId, (map.get(catId) ?? 0) + Number(row.amount))
+    }
+
+    return Array.from(map.entries()).map(([category_id, total]) => ({
+      category_id,
+      total,
+    }))
+  },
+
+  /** Get daily expense totals for a month (for heatmap) */
+  async getDailyExpenses(
+    userId: string,
+    year: number,
+    month: number,
+  ): Promise<{ date: string; total: number }[]> {
+    const client = getClient()
+    if (!client) return []
+
+    const startDate = `${year}-${String(month).padStart(2, '0')}-01`
+    const lastDay = new Date(year, month, 0).getDate()
+    const endDate = `${year}-${String(month).padStart(2, '0')}-${lastDay}`
+
+    const { data, error } = await client
+      .from('transactions')
+      .select('date, amount')
+      .eq('user_id', userId)
+      .eq('type', 'expense')
+      .gte('date', startDate)
+      .lte('date', endDate)
+
+    if (error) throw new Error(`analyticsRepo.getDailyExpenses: ${error.message}`)
+    if (!data) return []
+
+    const map = new Map<string, number>()
+    for (const row of data) {
+      const d = row.date as string
+      map.set(d, (map.get(d) ?? 0) + Number(row.amount))
+    }
+
+    return Array.from(map.entries()).map(([date, total]) => ({ date, total }))
+  },
+
+  /** Get monthly totals by type for N months back */
+  async getMonthlyTotals(
+    userId: string,
+    months: number,
+  ): Promise<{ month: string; type: string; total: number }[]> {
+    const client = getClient()
+    if (!client) return []
+
+    const now = new Date()
+    const startDate = new Date(now.getFullYear(), now.getMonth() - (months - 1), 1)
+    const startStr = startDate.toISOString().split('T')[0]
+    const endStr = now.toISOString().split('T')[0]
+
+    const { data, error } = await client
+      .from('transactions')
+      .select('date, type, amount')
+      .eq('user_id', userId)
+      .in('type', ['income', 'expense'])
+      .gte('date', startStr)
+      .lte('date', endStr)
+
+    if (error) throw new Error(`analyticsRepo.getMonthlyTotals: ${error.message}`)
+    if (!data) return []
+
+    // Group by YYYY-MM + type
+    const map = new Map<string, number>()
+    for (const row of data) {
+      const monthKey = (row.date as string).substring(0, 7)
+      const key = `${monthKey}|${row.type}`
+      map.set(key, (map.get(key) ?? 0) + Number(row.amount))
+    }
+
+    return Array.from(map.entries()).map(([key, total]) => {
+      const [month, type] = key.split('|')
+      return { month, type, total }
+    })
+  },
+}

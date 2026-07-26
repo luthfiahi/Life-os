@@ -112,6 +112,71 @@ export type CategoryUpdate = Partial<Omit<CategoryInsert, 'user_id'>>
 export type TransactionUpdate = Partial<Omit<TransactionInsert, 'user_id'>>
 export type BudgetUpdate = Partial<Omit<BudgetInsert, 'user_id'> & { is_active?: boolean }>
 
+// ─── Analytics Types (Sprint 5) ──────────────────────────
+
+/** Single data point for Cash Flow / Monthly Trend charts */
+export interface CashFlowPoint {
+  month: string       // '2026-07'
+  label: string       // 'Jul 2026'
+  income: number
+  expense: number
+  net: number
+}
+
+/** Expense breakdown by category (for donut/bar chart) */
+export interface CategoryBreakdownItem {
+  category_id: string
+  category_name: string
+  amount: number
+  percentage: number
+  color: string
+}
+
+/** Budget analytics per category */
+export interface BudgetAnalyticsItem {
+  category_id: string
+  category_name: string
+  budget_amount: number
+  spent: number
+  remaining: number
+  percentage: number
+  status: 'safe' | 'warning' | 'danger'
+}
+
+/** Heatmap cell — one day */
+export interface HeatmapCell {
+  date: string   // '2026-07-14'
+  dayOfWeek: number // 0=Mon ... 6=Sun
+  week: number    // week index in month
+  amount: number  // total expense that day
+}
+
+/** Net worth snapshot */
+export interface NetWorthData {
+  totalAssets: number
+  totalLiabilities: number
+  netWorth: number
+  byAccountType: { type: AccountType; label: string; balance: number }[]
+}
+
+/** Savings rate for a period */
+export interface SavingsRateData {
+  period: string     // 'Juli 2026'
+  income: number
+  expense: number
+  savings: number
+  rate: number       // percentage, e.g. 35.2
+}
+
+/** A single financial insight generated from data */
+export interface FinancialInsight {
+  id: string
+  type: 'positive' | 'negative' | 'neutral'
+  icon: 'trending-up' | 'trending-down' | 'alert-circle' | 'info' | 'zap' | 'target'
+  title: string
+  description: string
+}
+
 // ─── Dashboard Aggregation Types ──────────────────────────
 /** Used by the Wealth Snapshot widget on the Dashboard */
 

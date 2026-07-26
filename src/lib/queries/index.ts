@@ -11,3 +11,15 @@ export {
   useBudgets,
   useCreateBudget,
 } from './wealth-queries'
+
+// Sprint 5: Analytics
+export {
+  useCashFlow,
+  useMonthlyTrend,
+  useExpenseByCategory,
+  useBudgetAnalytics,
+  useSpendingHeatmap,
+  useNetWorth,
+  useSavingsRate,
+  useFinancialInsights,
+} from './analytics-queries'

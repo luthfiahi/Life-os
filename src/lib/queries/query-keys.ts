@@ -46,6 +46,23 @@ export const wealthKeys = {
   /** Budget Utilization detail */
   budgetUtilization: (userId: string, year: number, month: number) =>
     [...wealthKeys.all, 'budget-utilization', userId, year, month] as const,
+
+  /** Analytics (Sprint 5) */
+  analytics: (userId: string) => [...wealthKeys.all, 'analytics', userId] as const,
+  cashFlow: (userId: string, months: number) =>
+    [...wealthKeys.analytics(userId), 'cash-flow', months] as const,
+  expenseByCategory: (userId: string, year: number, month: number) =>
+    [...wealthKeys.analytics(userId), 'expense-by-cat', year, month] as const,
+  budgetAnalytics: (userId: string, year: number, month: number) =>
+    [...wealthKeys.analytics(userId), 'budget-analytics', year, month] as const,
+  spendingHeatmap: (userId: string, year: number, month: number) =>
+    [...wealthKeys.analytics(userId), 'heatmap', year, month] as const,
+  netWorth: (userId: string) =>
+    [...wealthKeys.analytics(userId), 'net-worth'] as const,
+  savingsRate: (userId: string, year: number, month: number) =>
+    [...wealthKeys.analytics(userId), 'savings-rate', year, month] as const,
+  financialInsights: (userId: string) =>
+    [...wealthKeys.analytics(userId), 'insights'] as const,
 }
 
 /**
@@ -58,7 +75,7 @@ export const wealthKeys = {
 export function invalidateWealthQueries(
   queryClient: import('@tanstack/react-query').QueryClient,
   userId: string,
-  scopes: Array<'accounts' | 'categories' | 'transactions' | 'budgets' | 'snapshot'>,
+  scopes: Array<'accounts' | 'categories' | 'transactions' | 'budgets' | 'snapshot' | 'analytics'>,
 ) {
   for (const scope of scopes) {
     switch (scope) {
@@ -76,6 +93,9 @@ export function invalidateWealthQueries(
         break
       case 'snapshot':
         queryClient.invalidateQueries({ queryKey: wealthKeys.snapshot(userId) })
+        break
+      case 'analytics':
+        queryClient.invalidateQueries({ queryKey: wealthKeys.analytics(userId) })
         break
     }
   }
