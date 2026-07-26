@@ -23,3 +23,15 @@ export {
   useSavingsRate,
   useFinancialInsights,
 } from './analytics-queries'
+
+// Sprint 5B: Debt
+export {
+  useDebtSnapshot,
+  useDebts,
+  useCreateDebt,
+  useUpdateDebt,
+  useDeleteDebt,
+  useDebtPayments,
+  useCreateDebtPayment,
+  useDeleteDebtPayment,
+} from './debt-queries'

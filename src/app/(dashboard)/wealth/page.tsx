@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Plus, Wallet, Receipt, Target, ArrowRight, TrendingUp, TrendingDown, Minus, BarChart3 } from 'lucide-react'
+import { Plus, Wallet, Receipt, Target, ArrowRight, TrendingUp, TrendingDown, Minus, BarChart3, Landmark } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -135,7 +135,7 @@ export default function WealthPage() {
       </div>
 
       {/* Quick Navigation */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
         <Link href="/wealth/accounts" className="group">
           <Card className="h-full transition-colors hover:border-[var(--c-accent)]/30">
             <CardContent className="p-4 flex items-center justify-between">
@@ -180,6 +180,23 @@ export default function WealthPage() {
                 <div>
                   <p className="text-sm font-semibold text-[var(--c-text)]">Budget</p>
                   <p className="text-xs text-[var(--c-text-muted)]">{budLoading ? '...' : `${activeBudgets} aktif`}</p>
+                </div>
+              </div>
+              <ArrowRight className="h-4 w-4 text-[var(--c-text-muted)] group-hover:translate-x-0.5 transition-transform" />
+            </CardContent>
+          </Card>
+        </Link>
+
+        <Link href="/wealth/debts" className="group">
+          <Card className="h-full transition-colors hover:border-[var(--c-accent-2)]/30">
+            <CardContent className="p-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-md)] bg-[var(--c-accent-2)]/10">
+                  <Landmark className="h-5 w-5 text-[var(--c-accent-2)]" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-[var(--c-text)]">Utang</p>
+                  <p className="text-xs text-[var(--c-text-muted)]">Cicilan & hutang</p>
                 </div>
               </div>
               <ArrowRight className="h-4 w-4 text-[var(--c-text-muted)] group-hover:translate-x-0.5 transition-transform" />

@@ -9,3 +9,6 @@ export { ConfirmDeleteDialog } from './confirm-delete-dialog'
 
 // Sprint 5: Analytics
 export * from './analytics'
+
+// Sprint 5B: Debt
+export * from './debt'

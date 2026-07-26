@@ -112,7 +112,70 @@ export type CategoryUpdate = Partial<Omit<CategoryInsert, 'user_id'>>
 export type TransactionUpdate = Partial<Omit<TransactionInsert, 'user_id'>>
 export type BudgetUpdate = Partial<Omit<BudgetInsert, 'user_id'> & { is_active?: boolean }>
 
-// ─── Analytics Types (Sprint 5) ──────────────────────────
+// ─── Debt Types (Sprint 5B) ───────────────────────────────
+
+export interface DebtRow {
+  id: string
+  user_id: string
+  name: string
+  creditor: string
+  total_amount: number
+  interest_rate: number
+  tenure_months: number
+  monthly_payment: number
+  remaining_balance: number
+  start_date: string
+  due_day: number
+  is_paid_off: boolean
+  paid_off_at: string | null
+  note: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface DebtPaymentRow {
+  id: string
+  user_id: string
+  debt_id: string
+  amount: number
+  date: string
+  note: string | null
+  created_at: string
+}
+
+export interface DebtInsert {
+  user_id: string
+  name: string
+  creditor?: string
+  total_amount: number
+  interest_rate?: number
+  tenure_months: number
+  remaining_balance?: number
+  start_date?: string
+  due_day?: number
+  note?: string | null
+}
+
+export interface DebtPaymentInsert {
+  user_id: string
+  debt_id: string
+  amount: number
+  date?: string
+  note?: string | null
+}
+
+export type DebtUpdate = Partial<Omit<DebtInsert, 'user_id'>> & { is_paid_off?: boolean; paid_off_at?: string | null; remaining_balance?: number }
+
+export interface DebtSnapshotData {
+  totalDebt: number
+  monthlyPayment: number
+  totalOriginal: number
+  paidOffPercentage: number
+  activeDebts: number
+  remainingMonths: number
+}
+
+// ─── Analytics Types (Sprint 5A) ─────────────────────────────
 
 /** Single data point for Cash Flow / Monthly Trend charts */
 export interface CashFlowPoint {

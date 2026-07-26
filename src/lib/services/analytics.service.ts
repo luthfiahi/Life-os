@@ -7,7 +7,7 @@
  * Graceful degradation: returns empty arrays/defaults when data is unavailable.
  */
 
-import { analyticsRepo, accountRepo, budgetRepo, categoryRepo, transactionRepo } from '@/lib/repositories/wealth.repository'
+import { analyticsRepo, accountRepo, budgetRepo, categoryRepo, transactionRepo, debtRepo } from '@/lib/repositories/wealth.repository'
 import { formatRupiah } from './wealth.service'
 import type {
   AccountType,
@@ -219,7 +219,10 @@ const ACCOUNT_TYPE_LABELS: Record<AccountType, string> = {
 }
 
 export async function getNetWorth(userId: string): Promise<NetWorthData> {
-  const accounts = await accountRepo.findActive(userId)
+  const [accounts, debts] = await Promise.all([
+    accountRepo.findActive(userId),
+    debtRepo.findActive(userId),
+  ])
 
   let totalAssets = 0
   const typeMap = new Map<AccountType, number>()
@@ -229,6 +232,8 @@ export async function getNetWorth(userId: string): Promise<NetWorthData> {
     totalAssets += bal
     typeMap.set(acc.type, (typeMap.get(acc.type) ?? 0) + bal)
   }
+
+  const totalLiabilities = debts.reduce((s, d) => s + Number(d.remaining_balance), 0)
 
   const byAccountType = (Object.keys(ACCOUNT_TYPE_LABELS) as AccountType[])
     .filter((t) => (typeMap.get(t) ?? 0) > 0)
@@ -241,8 +246,8 @@ export async function getNetWorth(userId: string): Promise<NetWorthData> {
 
   return {
     totalAssets,
-    totalLiabilities: 0, // No debt tracking yet
-    netWorth: totalAssets,
+    totalLiabilities,
+    netWorth: totalAssets - totalLiabilities,
     byAccountType,
   }
 }
@@ -397,6 +402,20 @@ export async function getFinancialInsights(
       icon: 'info',
       title: `Aset terbesar: ${topType.label}`,
       description: `${topType.label} menyumbang ${pct}% total kekayaan kamu (${formatRupiah(topType.balance)}).`,
+    })
+  }
+
+  // Insight 6: Debt awareness
+  const activeDebts = await debtRepo.findActive(userId)
+  if (activeDebts.length > 0) {
+    const totalDebt = activeDebts.reduce((s, d) => s + Number(d.remaining_balance), 0)
+    const monthlyPayment = activeDebts.reduce((s, d) => s + Number(d.monthly_payment), 0)
+    insights.push({
+      id: String(++id),
+      type: 'neutral',
+      icon: 'target',
+      title: `${activeDebts.length} utang aktif`,
+      description: `Total sisa utang ${formatRupiah(totalDebt)} dengan cicilan ${formatRupiah(monthlyPayment)}/bulan.`,
     })
   }
 

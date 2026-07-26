@@ -25,8 +25,13 @@ import type {
   BudgetRow,
   BudgetInsert,
   BudgetUpdate,
-  WealthSnapshotData,
+ WealthSnapshotData,
   BudgetUtilizationItem,
+  DebtRow,
+  DebtInsert,
+  DebtUpdate,
+  DebtPaymentRow,
+  DebtPaymentInsert,
 } from '@/lib/types/wealth'
 
 // ─── Helper ─────────────────────────────────────────────
@@ -524,5 +529,129 @@ export const analyticsRepo = {
       const [month, type] = key.split('|')
       return { month, type, total }
     })
+  },
+}
+
+// ─── Debts Repository (Sprint 5B) ──────────────────────────
+
+export const debtRepo = {
+  async findAll(userId: string): Promise<DebtRow[]> {
+    const client = getClient()
+    if (!client) return []
+
+    const { data, error } = await client
+      .from('debts')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+
+    if (error) throw new Error(`debtRepo.findAll: ${error.message}`)
+    return (data as DebtRow[]) ?? []
+  },
+
+  async findActive(userId: string): Promise<DebtRow[]> {
+    const client = getClient()
+    if (!client) return []
+
+    const { data, error } = await client
+      .from('debts')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('is_paid_off', false)
+      .order('due_day', { ascending: true })
+
+    if (error) throw new Error(`debtRepo.findActive: ${error.message}`)
+    return (data as DebtRow[]) ?? []
+  },
+
+  async findById(id: string): Promise<DebtRow | null> {
+    const client = getClient()
+    if (!client) return null
+
+    const { data, error } = await client
+      .from('debts')
+      .select('*')
+      .eq('id', id)
+      .single()
+
+    if (error) throw new Error(`debtRepo.findById: ${error.message}`)
+    return data as DebtRow | null
+  },
+
+  async create(payload: DebtInsert): Promise<DebtRow> {
+    const client = getClient()
+    if (!client) throw new Error('Supabase client not available')
+
+    const { data, error } = await client
+      .from('debts')
+      .insert(payload)
+      .select()
+      .single()
+
+    if (error) throw new Error(`debtRepo.create: ${error.message}`)
+    return data as DebtRow
+  },
+
+  async update(id: string, payload: DebtUpdate): Promise<DebtRow> {
+    const client = getClient()
+    if (!client) throw new Error('Supabase client not available')
+
+    const { data, error } = await client
+      .from('debts')
+      .update({ ...payload, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (error) throw new Error(`debtRepo.update: ${error.message}`)
+    return data as DebtRow
+  },
+
+  async delete(id: string): Promise<void> {
+    const client = getClient()
+    if (!client) return
+
+    const { error } = await client.from('debts').delete().eq('id', id)
+    if (error) throw new Error(`debtRepo.delete: ${error.message}`)
+  },
+}
+
+// ─── Debt Payments Repository (Sprint 5B) ───────────────────
+
+export const debtPaymentRepo = {
+  async findByDebtId(debtId: string): Promise<DebtPaymentRow[]> {
+    const client = getClient()
+    if (!client) return []
+
+    const { data, error } = await client
+      .from('debt_payments')
+      .select('*')
+      .eq('debt_id', debtId)
+      .order('date', { ascending: false })
+
+    if (error) throw new Error(`debtPaymentRepo.findByDebtId: ${error.message}`)
+    return (data as DebtPaymentRow[]) ?? []
+  },
+
+  async create(payload: DebtPaymentInsert): Promise<DebtPaymentRow> {
+    const client = getClient()
+    if (!client) throw new Error('Supabase client not available')
+
+    const { data, error } = await client
+      .from('debt_payments')
+      .insert(payload)
+      .select()
+      .single()
+
+    if (error) throw new Error(`debtPaymentRepo.create: ${error.message}`)
+    return data as DebtPaymentRow
+  },
+
+  async delete(id: string): Promise<void> {
+    const client = getClient()
+    if (!client) return
+
+    const { error } = await client.from('debt_payments').delete().eq('id', id)
+    if (error) throw new Error(`debtPaymentRepo.delete: ${error.message}`)
   },
 }

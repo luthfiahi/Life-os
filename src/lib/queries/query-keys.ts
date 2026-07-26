@@ -63,6 +63,13 @@ export const wealthKeys = {
     [...wealthKeys.analytics(userId), 'savings-rate', year, month] as const,
   financialInsights: (userId: string) =>
     [...wealthKeys.analytics(userId), 'insights'] as const,
+
+  /** Debts (Sprint 5B) */
+  debts: (userId: string) => [...wealthKeys.all, 'debts', userId] as const,
+  debtList: (userId: string, filters?: { active?: boolean }) =>
+    [...wealthKeys.debts(userId), 'list', filters] as const,
+  debtPayments: (userId: string, debtId: string) =>
+    [...wealthKeys.all, 'debt-payments', userId, debtId] as const,
 }
 
 /**
@@ -75,7 +82,7 @@ export const wealthKeys = {
 export function invalidateWealthQueries(
   queryClient: import('@tanstack/react-query').QueryClient,
   userId: string,
-  scopes: Array<'accounts' | 'categories' | 'transactions' | 'budgets' | 'snapshot' | 'analytics'>,
+  scopes: Array<'accounts' | 'categories' | 'transactions' | 'budgets' | 'snapshot' | 'analytics' | 'debts'>,
 ) {
   for (const scope of scopes) {
     switch (scope) {
@@ -96,6 +103,9 @@ export function invalidateWealthQueries(
         break
       case 'analytics':
         queryClient.invalidateQueries({ queryKey: wealthKeys.analytics(userId) })
+        break
+      case 'debts':
+        queryClient.invalidateQueries({ queryKey: wealthKeys.debts(userId) })
         break
     }
   }
