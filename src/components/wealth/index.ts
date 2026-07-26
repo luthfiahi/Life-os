@@ -6,6 +6,8 @@ export { BudgetCard } from './budget-card'
 export { BudgetFormDialog } from './budget-form-dialog'
 export { EmptyState } from './empty-state'
 export { ConfirmDeleteDialog } from './confirm-delete-dialog'
+export { InsightPanel } from './insight-panel'
+export { TransactionDetailDrawer } from './transaction-detail-drawer'
 
 // Sprint 5: Analytics
 export * from './analytics'
