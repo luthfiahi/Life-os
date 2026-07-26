@@ -79,7 +79,10 @@ export function BudgetFormDialog({ open, onOpenChange, budget }: BudgetFormDialo
   const isSubmitting = createBudget.isPending || updateBudget.isPending
 
   async function onSubmit(values: BudgetFormValues) {
-    if (!user?.id) return
+    if (!user?.id) {
+      alert('Kamu belum login atau sesi sudah habis. Silakan login ulang.')
+      return
+    }
     try {
       if (isEditing && budget) {
         await updateBudget.mutateAsync({ id: budget.id, payload: values })

@@ -83,7 +83,10 @@ export function DebtFormDialog({ open, onOpenChange, editDebt }: DebtFormDialogP
   })()
 
   const onSubmit = (values: DebtFormValues) => {
-    if (!user?.id) return
+    if (!user?.id) {
+      alert('Kamu belum login atau sesi sudah habis. Silakan login ulang.')
+      return
+    }
     setServerError('')
 
     const payload = {

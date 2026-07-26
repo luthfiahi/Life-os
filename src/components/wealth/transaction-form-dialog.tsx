@@ -117,7 +117,11 @@ export function TransactionFormDialog({ open, onOpenChange, transaction, default
   const isSubmitting = createTx.isPending || updateTx.isPending
 
   async function handleAddCategory() {
-    if (!user?.id || !newCategoryName.trim()) return
+    if (!user?.id) {
+      alert('Kamu belum login atau sesi sudah habis. Silakan login ulang.')
+      return
+    }
+    if (!newCategoryName.trim()) return
     try {
       const newCat = await createCategory.mutateAsync({
         user_id: user.id,
@@ -134,7 +138,10 @@ export function TransactionFormDialog({ open, onOpenChange, transaction, default
   }
 
   async function onSubmit(values: TxFormValues) {
-    if (!user?.id) return
+    if (!user?.id) {
+      alert('Kamu belum login atau sesi sudah habis. Silakan login ulang.')
+      return
+    }
     try {
       if (isEditing && transaction) {
         await updateTx.mutateAsync({

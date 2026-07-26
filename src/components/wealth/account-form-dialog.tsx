@@ -81,7 +81,10 @@ export function AccountFormDialog({ open, onOpenChange, account }: AccountFormDi
   const isSubmitting = createAccount.isPending || updateAccount.isPending
 
   async function onSubmit(values: AccountFormValues) {
-    if (!user?.id) return
+    if (!user?.id) {
+      alert('Kamu belum login atau sesi sudah habis. Silakan login ulang.')
+      return
+    }
     try {
       if (isEditing && account) {
         await updateAccount.mutateAsync({

@@ -50,7 +50,11 @@ export function PaymentFormDialog({ open, onOpenChange, debt }: PaymentFormDialo
   const willBePaidOff = afterPayment <= 0
 
   const onSubmit = (values: PaymentFormValues) => {
-    if (!user?.id || !debt) return
+    if (!user?.id) {
+      alert('Kamu belum login atau sesi sudah habis. Silakan login ulang.')
+      return
+    }
+    if (!debt) return
     setServerError('')
 
     const payAmount = Math.min(values.amount, remaining)
