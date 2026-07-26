@@ -51,6 +51,10 @@ CREATE INDEX IF NOT EXISTS idx_debts_user_active ON public.debts(user_id, is_pai
 -- RLS
 ALTER TABLE public.debts ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view own debts" ON public.debts;
+DROP POLICY IF EXISTS "Users can insert own debts" ON public.debts;
+DROP POLICY IF EXISTS "Users can update own debts" ON public.debts;
+DROP POLICY IF EXISTS "Users can delete own debts" ON public.debts;
 CREATE POLICY "Users can view own debts"
   ON public.debts FOR SELECT
   USING (auth.uid() = user_id);
@@ -68,6 +72,7 @@ CREATE POLICY "Users can delete own debts"
   USING (auth.uid() = user_id);
 
 -- updated_at trigger
+DROP TRIGGER IF EXISTS debts_updated_at ON public.debts;
 CREATE TRIGGER debts_updated_at
   BEFORE UPDATE ON public.debts
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
@@ -95,6 +100,9 @@ CREATE INDEX IF NOT EXISTS idx_debt_payments_debt_id ON public.debt_payments(deb
 -- RLS
 ALTER TABLE public.debt_payments ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view own debt payments" ON public.debt_payments;
+DROP POLICY IF EXISTS "Users can insert own debt payments" ON public.debt_payments;
+DROP POLICY IF EXISTS "Users can delete own debt payments" ON public.debt_payments;
 CREATE POLICY "Users can view own debt payments"
   ON public.debt_payments FOR SELECT
   USING (auth.uid() = user_id);

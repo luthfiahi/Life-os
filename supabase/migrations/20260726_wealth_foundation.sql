@@ -36,12 +36,17 @@ CREATE INDEX IF NOT EXISTS idx_accounts_user_id ON public.accounts(user_id);
 CREATE INDEX IF NOT EXISTS idx_accounts_user_active ON public.accounts(user_id, is_active);
 CREATE INDEX IF NOT EXISTS idx_accounts_type ON public.accounts(user_id, type);
 
+DROP TRIGGER IF EXISTS accounts_updated_at ON public.accounts;
 CREATE TRIGGER accounts_updated_at
   BEFORE UPDATE ON public.accounts
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
 ALTER TABLE public.accounts ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "users_select_own_accounts" ON public.accounts;
+DROP POLICY IF EXISTS "users_insert_own_accounts" ON public.accounts;
+DROP POLICY IF EXISTS "users_update_own_accounts" ON public.accounts;
+DROP POLICY IF EXISTS "users_delete_own_accounts" ON public.accounts;
 CREATE POLICY "users_select_own_accounts" ON public.accounts FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "users_insert_own_accounts" ON public.accounts FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "users_update_own_accounts" ON public.accounts FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
@@ -66,6 +71,10 @@ CREATE INDEX IF NOT EXISTS idx_categories_user_type ON public.categories(user_id
 
 ALTER TABLE public.categories ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "users_select_own_categories" ON public.categories;
+DROP POLICY IF EXISTS "users_insert_own_categories" ON public.categories;
+DROP POLICY IF EXISTS "users_update_own_categories" ON public.categories;
+DROP POLICY IF EXISTS "users_delete_own_categories" ON public.categories;
 CREATE POLICY "users_select_own_categories" ON public.categories FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "users_insert_own_categories" ON public.categories FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "users_update_own_categories" ON public.categories FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
@@ -96,6 +105,10 @@ CREATE INDEX IF NOT EXISTS idx_transactions_monthly ON public.transactions(user_
 
 ALTER TABLE public.transactions ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "users_select_own_transactions" ON public.transactions;
+DROP POLICY IF EXISTS "users_insert_own_transactions" ON public.transactions;
+DROP POLICY IF EXISTS "users_update_own_transactions" ON public.transactions;
+DROP POLICY IF EXISTS "users_delete_own_transactions" ON public.transactions;
 CREATE POLICY "users_select_own_transactions" ON public.transactions FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "users_insert_own_transactions" ON public.transactions FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "users_update_own_transactions" ON public.transactions FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
@@ -123,12 +136,17 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_budgets_user_category_period
   ON public.budgets(user_id, category_id, period)
   WHERE is_active = true;
 
+DROP TRIGGER IF EXISTS budgets_updated_at ON public.budgets;
 CREATE TRIGGER budgets_updated_at
   BEFORE UPDATE ON public.budgets
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
 ALTER TABLE public.budgets ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "users_select_own_budgets" ON public.budgets;
+DROP POLICY IF EXISTS "users_insert_own_budgets" ON public.budgets;
+DROP POLICY IF EXISTS "users_update_own_budgets" ON public.budgets;
+DROP POLICY IF EXISTS "users_delete_own_budgets" ON public.budgets;
 CREATE POLICY "users_select_own_budgets" ON public.budgets FOR SELECT USING (auth.uid() = user_id);
 CREATE POLICY "users_insert_own_budgets" ON public.budgets FOR INSERT WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "users_update_own_budgets" ON public.budgets FOR UPDATE USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
