@@ -8,7 +8,7 @@
  * This stub exists for backward compatibility but is not used.
  */
 
-export interface ToastProps {}
+export type ToastProps = Record<string, unknown>
 export type ToastActionElement = React.ReactElement
 
 export function useToast() {
