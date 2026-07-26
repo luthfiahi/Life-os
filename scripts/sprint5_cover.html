@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+  <style>
+    @page { size: 794px 1123px; margin: 0; }
+    :root {
+      --c-bg: #f6f7f7;
+      --c-accent: #2a8ec0;
+      --c-text: #17191a;
+      --c-muted: #707679;
+      --c-mid: #446677;
+      --c-surface: #e4e7e8;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 794px;
+      height: 1123px;
+      background: var(--c-bg);
+      color: var(--c-text);
+      font-family: 'Inter', 'Noto Sans SC', sans-serif;
+    }
+    @media screen {
+      html { height: auto; display: flex; justify-content: center; min-height: 100vh; background: var(--c-bg); }
+      body { transform-origin: top center; scale: min(1, calc(100vw / 794), calc(100vh / 1123)); margin: 0 auto; box-shadow: 0 0 60px rgba(0,0,0,0.3); }
+    }
+    .cover {
+      width: 794px;
+      height: 1123px;
+      position: relative;
+      box-sizing: border-box;
+    }
+    /* Layer 1 - Background grid */
+    .cover-bg-layer {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      z-index: 1;
+    }
+    .grid-bg {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(42,142,192,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(42,142,192,0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+    /* Layer 2 - Structure: Ultra-thick vertical anchor line */
+    .anchor-line {
+      position: absolute;
+      left: 80px;
+      top: 112px;
+      bottom: 112px;
+      width: 5px;
+      background: var(--c-accent);
+      z-index: 2;
+    }
+    /* Layer 3 - Content */
+    .content-zone {
+      position: absolute;
+      left: 140px;
+      right: 80px;
+      top: 0;
+      bottom: 0;
+      z-index: 3;
+    }
+    .kicker {
+      position: absolute;
+      top: 180px;
+      font-size: 13pt;
+      font-weight: 500;
+      letter-spacing: 3pt;
+      text-transform: uppercase;
+      color: var(--c-muted);
+      opacity: 0.7;
+    }
+    .hero-title {
+      position: absolute;
+      top: 310px;
+      font-size: 52pt;
+      font-weight: 900;
+      line-height: 1.12;
+      color: var(--c-text);
+      max-width: 540px;
+      letter-spacing: -1pt;
+    }
+    .hero-title span {
+      color: var(--c-accent);
+    }
+    .summary {
+      position: absolute;
+      top: 510px;
+      font-size: 15pt;
+      font-weight: 400;
+      line-height: 1.7;
+      color: var(--c-muted);
+      max-width: 480px;
+      opacity: 0.85;
+    }
+    .meta {
+      position: absolute;
+      top: 760px;
+      font-size: 15pt;
+      font-weight: 400;
+      color: var(--c-text);
+      opacity: 0.85;
+    }
+    .meta-sub {
+      position: absolute;
+      top: 795px;
+      font-size: 12pt;
+      font-weight: 400;
+      color: var(--c-muted);
+      opacity: 0.7;
+    }
+    .footer-line {
+      position: absolute;
+      bottom: 112px;
+      left: 140px;
+      right: 80px;
+      height: 1px;
+      background: var(--c-border, #bdcbd2);
+      z-index: 2;
+    }
+    .footer-text {
+      position: absolute;
+      bottom: 48px;
+      left: 130px;
+      font-size: 11pt;
+      font-weight: 400;
+      letter-spacing: 2pt;
+      text-transform: uppercase;
+      color: var(--c-muted);
+      opacity: 0.5;
+      z-index: 3;
+    }
+  </style>
+</head>
+<body>
+  <div class="cover">
+    <!-- Layer 1: Background -->
+    <div class="cover-bg-layer">
+      <div class="grid-bg"></div>
+    </div>
+    <!-- Layer 2: Structure -->
+    <div class="anchor-line"></div>
+    <div class="footer-line"></div>
+    <!-- Layer 3: Content -->
+    <div class="content-zone">
+      <div class="kicker">Dokumentasi Sprint 5A &amp; 5B</div>
+      <div class="hero-title">Wealth<br><span>Analytics</span><br>&amp; Debt<br>Management</div>
+      <div class="summary">Dokumen teknis yang mencakup implementasi Wealth Analytics (Sprint 5A) dengan 8 fitur chart dan insight, serta perencanaan Debt Management (Sprint 5B) untuk melengkapi modul Wealth secara menyeluruh.</div>
+      <div class="meta">Modul Wealth - FinTrack Dashboard</div>
+      <div class="meta-sub">Juli 2026</div>
+    </div>
+    <div class="footer-text">FinTrack Development Roadmap</div>
+  </div>
+</body>
+</html>
