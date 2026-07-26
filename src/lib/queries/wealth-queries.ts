@@ -91,6 +91,35 @@ export function useCreateAccount() {
   })
 }
 
+export function useUpdateAccount() {
+  const queryClient = useQueryClient()
+  const { user } = useAuth()
+
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: AccountUpdate }) =>
+      accountRepo.update(id, payload),
+    onSuccess: () => {
+      if (user?.id) {
+        invalidateWealthQueries(queryClient, user.id, ['accounts', 'snapshot'])
+      }
+    },
+  })
+}
+
+export function useDeleteAccount() {
+  const queryClient = useQueryClient()
+  const { user } = useAuth()
+
+  return useMutation({
+    mutationFn: (id: string) => accountRepo.delete(id),
+    onSuccess: () => {
+      if (user?.id) {
+        invalidateWealthQueries(queryClient, user.id, ['accounts', 'transactions', 'snapshot'])
+      }
+    },
+  })
+}
+
 // ─── Categories ──────────────────────────────────────────
 
 export function useCategories(type?: 'income' | 'expense') {
@@ -155,6 +184,35 @@ export function useCreateTransaction() {
   })
 }
 
+export function useUpdateTransaction() {
+  const queryClient = useQueryClient()
+  const { user } = useAuth()
+
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: TransactionUpdate }) =>
+      transactionRepo.update(id, payload),
+    onSuccess: () => {
+      if (user?.id) {
+        invalidateWealthQueries(queryClient, user.id, ['transactions', 'snapshot', 'budgets'])
+      }
+    },
+  })
+}
+
+export function useDeleteTransaction() {
+  const queryClient = useQueryClient()
+  const { user } = useAuth()
+
+  return useMutation({
+    mutationFn: (id: string) => transactionRepo.delete(id),
+    onSuccess: () => {
+      if (user?.id) {
+        invalidateWealthQueries(queryClient, user.id, ['transactions', 'snapshot', 'budgets'])
+      }
+    },
+  })
+}
+
 // ─── Budgets ─────────────────────────────────────────────
 
 export function useBudgets(options?: { active?: boolean }) {
@@ -174,12 +232,59 @@ export function useBudgets(options?: { active?: boolean }) {
   })
 }
 
+export function useBudgetUtilization(year: number, month: number) {
+  const { user } = useAuth()
+  const userId = user?.id
+
+  return useQuery({
+    queryKey: userId
+      ? wealthKeys.budgetUtilization(userId, year, month)
+      : ['wealth', 'budget-util', 'anonymous'],
+    queryFn: async () => {
+      if (!userId) return []
+      const { getBudgetUtilization } = await import('@/lib/services/wealth.service')
+      return getBudgetUtilization(userId, year, month)
+    },
+    enabled: !!userId,
+    staleTime: 2 * 60 * 1000,
+  })
+}
+
 export function useCreateBudget() {
   const queryClient = useQueryClient()
   const { user } = useAuth()
 
   return useMutation({
     mutationFn: (payload: BudgetInsert) => budgetRepo.create(payload),
+    onSuccess: () => {
+      if (user?.id) {
+        invalidateWealthQueries(queryClient, user.id, ['budgets', 'snapshot'])
+      }
+    },
+  })
+}
+
+export function useUpdateBudget() {
+  const queryClient = useQueryClient()
+  const { user } = useAuth()
+
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: string; payload: BudgetUpdate }) =>
+      budgetRepo.update(id, payload),
+    onSuccess: () => {
+      if (user?.id) {
+        invalidateWealthQueries(queryClient, user.id, ['budgets', 'snapshot'])
+      }
+    },
+  })
+}
+
+export function useDeleteBudget() {
+  const queryClient = useQueryClient()
+  const { user } = useAuth()
+
+  return useMutation({
+    mutationFn: (id: string) => budgetRepo.delete(id),
     onSuccess: () => {
       if (user?.id) {
         invalidateWealthQueries(queryClient, user.id, ['budgets', 'snapshot'])
