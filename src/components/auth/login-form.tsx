@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '@/hooks/use-auth'
 import { User, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
@@ -11,6 +11,20 @@ export function LoginForm() {
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [rememberMe, setRememberMe] = useState(false)
+  const [isDark, setIsDark] = useState(false)
+
+  useEffect(() => {
+    const check = () => setIsDark(document.documentElement.classList.contains('dark'))
+    check()
+    const obs = new MutationObserver(check)
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+    return () => obs.disconnect()
+  }, [])
+
+  const textMain = isDark ? '#e8eaed' : '#1A202C'
+  const textSub = isDark ? '#9ca3af' : '#718096'
+  const bgCard = isDark ? '#24282e' : '#ffffff'
+  const bgInput = isDark ? '#1a1d22' : '#ffffff'
 
   function translateError(msg: string): string {
     const lower = msg.toLowerCase()
@@ -33,19 +47,19 @@ export function LoginForm() {
   }
 
   return (
-    <div className="w-full rounded-2xl bg-white p-8 shadow-lg">
+    <div className="w-full rounded-2xl p-8 shadow-lg" style={{ backgroundColor: bgCard }}>
       {/* Brand Logo */}
       <div className="text-center mb-5">
         <div className="h-16 w-16 rounded-2xl bg-[#2E86DE] mx-auto flex items-center justify-center shadow-lg">
           <span className="text-2xl font-black text-white tracking-tight">LO</span>
         </div>
-        <h1 className="mt-3 text-[26px] font-bold" style={{ color: '#1A202C' }}>Life OS</h1>
-        <p className="mt-1 text-[15px]" style={{ color: '#718096' }}>Kelola hidupmu dalam satu tempat</p>
+        <h1 className="mt-3 text-[26px] font-bold" style={{ color: textMain }}>Life OS</h1>
+        <p className="mt-1 text-[15px]" style={{ color: textSub }}>Kelola hidupmu dalam satu tempat</p>
       </div>
 
       {/* User Avatar Circle */}
       <div className="flex justify-center mb-7">
-        <div className="h-[88px] w-[88px] rounded-full border-[3px] border-[#2E86DE] flex items-center justify-center bg-white">
+        <div className="h-[88px] w-[88px] rounded-full border-[3px] border-[#2E86DE] flex items-center justify-center" style={{ backgroundColor: bgCard }}>
           <User className="h-11 w-11 text-[#2E86DE]" strokeWidth={1.5} />
         </div>
       </div>
@@ -54,7 +68,7 @@ export function LoginForm() {
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Error Alert */}
         {error && (
-          <div className="flex items-center gap-2 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-[14px] text-red-600">
+          <div className="flex items-center gap-2 rounded-xl border px-4 py-3 text-[14px]" style={isDark ? { backgroundColor: 'rgba(127,29,29,0.3)', borderColor: '#7f1d1d', color: '#fca5a5' } : { backgroundColor: '#fef2f2', borderColor: '#fecaca', color: '#dc2626' }}>
             <AlertCircle className="h-4 w-4 shrink-0" />
             <span>{translateError(error)}</span>
           </div>
@@ -74,10 +88,10 @@ export function LoginForm() {
             autoComplete="email"
             required
             disabled={loading}
-            style={{ color: '#1A202C', height: '56px', fontSize: '17px' }}
-            className="w-full rounded-xl border-2 border-[#2E86DE] bg-white pl-[52px] pr-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#2E86DE]/20 disabled:opacity-50"
+            style={{ color: textMain, height: '56px', fontSize: '17px', backgroundColor: bgInput }}
+            className="w-full rounded-xl border-2 border-[#2E86DE] pl-[52px] pr-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#2E86DE]/20 disabled:opacity-50"
           />
-          <style>{`#email::placeholder { color: #718096; font-weight: 400; font-size: 16px; }`}</style>
+          <style>{`#email::placeholder { color: ${textSub}; font-weight: 400; font-size: 16px; }`}</style>
         </div>
 
         {/* Password Input */}
@@ -94,10 +108,10 @@ export function LoginForm() {
             autoComplete="current-password"
             required
             disabled={loading}
-            style={{ color: '#1A202C', height: '56px', fontSize: '17px' }}
-            className="w-full rounded-xl border-2 border-[#2E86DE] bg-white pl-[52px] pr-[52px] font-medium focus:outline-none focus:ring-2 focus:ring-[#2E86DE]/20 disabled:opacity-50"
+            style={{ color: textMain, height: '56px', fontSize: '17px', backgroundColor: bgInput }}
+            className="w-full rounded-xl border-2 border-[#2E86DE] pl-[52px] pr-[52px] font-medium focus:outline-none focus:ring-2 focus:ring-[#2E86DE]/20 disabled:opacity-50"
           />
-          <style>{`#password::placeholder { color: #718096; font-weight: 400; font-size: 16px; }`}</style>
+          <style>{`#password::placeholder { color: ${textSub}; font-weight: 400; font-size: 16px; }`}</style>
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
@@ -119,7 +133,7 @@ export function LoginForm() {
             onClick={() => setRememberMe(!rememberMe)}
             className="flex items-center gap-2"
           >
-            <div className={"h-[22px] w-[22px] rounded-[4px] border-2 border-[#2E86DE] flex items-center justify-center transition-colors " + (rememberMe ? "bg-[#2E86DE]" : "bg-white")}>
+            <div className="h-[22px] w-[22px] rounded-[4px] border-2 border-[#2E86DE] flex items-center justify-center transition-colors" style={{ backgroundColor: rememberMe ? '#2E86DE' : bgInput }}>
               {rememberMe && (
                 <svg className="h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -152,7 +166,7 @@ export function LoginForm() {
         </div>
 
         {/* Register Link */}
-        <p className="text-center text-[14px] pt-1" style={{ color: '#4A5568' }}>
+        <p className="text-center text-[14px] pt-1" style={{ color: textSub }}>
           Belum punya akun?{' '}
           <Link href="/auth/register" className="font-semibold text-[#2E86DE] hover:text-[#1a6bb5] transition-colors">
             Daftar sekarang
