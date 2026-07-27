@@ -32,28 +32,21 @@ export function LoginForm() {
     await signInWithEmail(email, password)
   }
 
-  const inputStyle = {
-    color: '#1A202C',
-    height: '56px',
-  } as React.CSSProperties
-
-  const placeholderStyle = 'color: #2E86DE; font-weight: 500;'
-
   return (
-    <div className="w-full">
+    <div className="w-full rounded-2xl bg-white p-8 shadow-lg">
       {/* Brand Logo */}
-      <div className="text-center mb-6">
-        <div className="h-14 w-14 rounded-2xl bg-[#2E86DE] mx-auto flex items-center justify-center shadow-lg">
-          <span className="text-xl font-black text-white tracking-tight">LO</span>
+      <div className="text-center mb-5">
+        <div className="h-16 w-16 rounded-2xl bg-[#2E86DE] mx-auto flex items-center justify-center shadow-lg">
+          <span className="text-2xl font-black text-white tracking-tight">LO</span>
         </div>
-        <h1 className="mt-3 text-2xl font-bold" style={{ color: '#1A202C' }}>Life OS</h1>
-        <p className="mt-0.5 text-sm" style={{ color: '#718096' }}>Kelola hidupmu dalam satu tempat</p>
+        <h1 className="mt-3 text-[26px] font-bold" style={{ color: '#1A202C' }}>Life OS</h1>
+        <p className="mt-1 text-[15px]" style={{ color: '#718096' }}>Kelola hidupmu dalam satu tempat</p>
       </div>
 
       {/* User Avatar Circle */}
       <div className="flex justify-center mb-7">
-        <div className="h-24 w-24 rounded-full border-[3px] border-[#2E86DE] flex items-center justify-center bg-white">
-          <User className="h-12 w-12 text-[#2E86DE]" strokeWidth={1.5} />
+        <div className="h-[88px] w-[88px] rounded-full border-[3px] border-[#2E86DE] flex items-center justify-center bg-white">
+          <User className="h-11 w-11 text-[#2E86DE]" strokeWidth={1.5} />
         </div>
       </div>
 
@@ -61,7 +54,7 @@ export function LoginForm() {
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Error Alert */}
         {error && (
-          <div className="flex items-center gap-2 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-600">
+          <div className="flex items-center gap-2 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-[14px] text-red-600">
             <AlertCircle className="h-4 w-4 shrink-0" />
             <span>{translateError(error)}</span>
           </div>
@@ -70,7 +63,7 @@ export function LoginForm() {
         {/* Email Input */}
         <div className="relative">
           <div className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2">
-            <User className="h-5 w-5 text-[#2E86DE]" strokeWidth={1.5} />
+            <User className="h-[22px] w-[22px] text-[#2E86DE]" strokeWidth={1.5} />
           </div>
           <input
             id="email"
@@ -81,16 +74,16 @@ export function LoginForm() {
             autoComplete="email"
             required
             disabled={loading}
-            style={inputStyle}
-            className="w-full rounded-xl border-2 border-[#2E86DE] bg-white pl-12 pr-4 text-[17px] font-medium focus:outline-none focus:ring-2 focus:ring-[#2E86DE]/20 disabled:opacity-50"
+            style={{ color: '#1A202C', height: '56px', fontSize: '17px' }}
+            className="w-full rounded-xl border-2 border-[#2E86DE] bg-white pl-[52px] pr-4 font-medium focus:outline-none focus:ring-2 focus:ring-[#2E86DE]/20 disabled:opacity-50"
           />
-          <style>{`#email::placeholder { ${placeholderStyle} }`}</style>
+          <style>{`#email::placeholder { color: #718096; font-weight: 400; font-size: 16px; }`}</style>
         </div>
 
         {/* Password Input */}
         <div className="relative">
           <div className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2">
-            <Lock className="h-5 w-5 text-[#2E86DE]" strokeWidth={1.5} />
+            <Lock className="h-[22px] w-[22px] text-[#2E86DE]" strokeWidth={1.5} />
           </div>
           <input
             id="password"
@@ -101,14 +94,14 @@ export function LoginForm() {
             autoComplete="current-password"
             required
             disabled={loading}
-            style={inputStyle}
-            className="w-full rounded-xl border-2 border-[#2E86DE] bg-white pl-12 pr-12 text-[17px] font-medium focus:outline-none focus:ring-2 focus:ring-[#2E86DE]/20 disabled:opacity-50"
+            style={{ color: '#1A202C', height: '56px', fontSize: '17px' }}
+            className="w-full rounded-xl border-2 border-[#2E86DE] bg-white pl-[52px] pr-[52px] font-medium focus:outline-none focus:ring-2 focus:ring-[#2E86DE]/20 disabled:opacity-50"
           />
-          <style>{`#password::placeholder { ${placeholderStyle} }`}</style>
+          <style>{`#password::placeholder { color: #718096; font-weight: 400; font-size: 16px; }`}</style>
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-[#2E86DE] hover:text-[#1a6bb5] transition-colors"
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-[#2E86DE] hover:text-[#1a6bb5] transition-colors p-1"
             tabIndex={-1}
           >
             {showPassword ? (
@@ -120,7 +113,7 @@ export function LoginForm() {
         </div>
 
         {/* Options Row */}
-        <div className="flex items-center justify-between pt-1 gap-3">
+        <div className="flex items-center justify-between pt-1">
           <button
             type="button"
             onClick={() => setRememberMe(!rememberMe)}
@@ -133,9 +126,9 @@ export function LoginForm() {
                 </svg>
               )}
             </div>
-            <span className="text-sm font-medium text-[#2E86DE]">Ingat saya</span>
+            <span className="text-[14px] font-medium text-[#2E86DE]">Ingat saya</span>
           </button>
-          <Link href="/auth/forgot-password" className="text-sm font-medium text-[#2E86DE] hover:text-[#1a6bb5] transition-colors whitespace-nowrap ml-auto">
+          <Link href="/auth/forgot-password" className="text-[14px] font-medium text-[#2E86DE] hover:text-[#1a6bb5] transition-colors">
             Lupa password?
           </Link>
         </div>
@@ -145,7 +138,8 @@ export function LoginForm() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full h-[56px] rounded-xl bg-[#2E86DE] text-white text-lg font-bold tracking-wide shadow-[0_4px_14px_rgba(46,134,222,0.35)] hover:bg-[#2574c4] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            style={{ height: '56px', fontSize: '18px' }}
+            className="w-full rounded-xl bg-[#2E86DE] text-white font-bold tracking-wide shadow-[0_4px_14px_rgba(46,134,222,0.35)] hover:bg-[#2574c4] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {loading && (
               <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -158,7 +152,7 @@ export function LoginForm() {
         </div>
 
         {/* Register Link */}
-        <p className="text-center text-sm pt-1" style={{ color: '#4A5568' }}>
+        <p className="text-center text-[14px] pt-1" style={{ color: '#4A5568' }}>
           Belum punya akun?{' '}
           <Link href="/auth/register" className="font-semibold text-[#2E86DE] hover:text-[#1a6bb5] transition-colors">
             Daftar sekarang
