@@ -6,7 +6,8 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
+import { Landmark, Calculator, CalendarDays, FileText, AlertCircle, CheckCircle2 } from 'lucide-react'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useAuth } from '@/hooks/use-auth'
@@ -73,7 +74,6 @@ export function DebtFormDialog({ open, onOpenChange, editDebt }: DebtFormDialogP
   const tenureMonths = watch('tenure_months')
   const remainingBalance = watch('remaining_balance')
 
-  // Calculate estimated monthly payment on client
   const estimatedMonthly = (() => {
     const P = totalAmount || 0
     const r = (interestRate || 0) / 100 / 12
@@ -81,6 +81,9 @@ export function DebtFormDialog({ open, onOpenChange, editDebt }: DebtFormDialogP
     if (r === 0) return P / n
     return (P * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1)
   })()
+
+  const totalPayment = estimatedMonthly * (tenureMonths || 1)
+  const totalInterest = totalPayment - (totalAmount || 0)
 
   const onSubmit = (values: DebtFormValues) => {
     if (!user?.id) {
@@ -99,19 +102,13 @@ export function DebtFormDialog({ open, onOpenChange, editDebt }: DebtFormDialogP
       updateDebt.mutate(
         { id: editDebt.id, payload },
         {
-          onSuccess: () => {
-            onOpenChange(false)
-            reset()
-          },
+          onSuccess: () => { onOpenChange(false); reset() },
           onError: (err) => setServerError(err.message),
         },
       )
     } else {
       createDebt.mutate(payload, {
-        onSuccess: () => {
-          onOpenChange(false)
-          reset()
-        },
+        onSuccess: () => { onOpenChange(false); reset() },
         onError: (err) => setServerError(err.message),
       })
     }
@@ -123,80 +120,120 @@ export function DebtFormDialog({ open, onOpenChange, editDebt }: DebtFormDialogP
     <Dialog open={open} onOpenChange={(v) => { if (!v) reset(); onOpenChange(v) }}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-h2">
-            {isEditing ? 'Edit Utang' : 'Tambah Utang'}
-          </DialogTitle>
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-sm">
+              <Landmark className="h-5 w-5 text-white" />
+            </div>
+            <div>
+              <DialogTitle>{isEditing ? 'Edit Utang' : 'Tambah Utang'}</DialogTitle>
+              <DialogDescription>
+                {isEditing ? 'Ubah detail pinjaman kamu.' : 'Catat pinjaman dan lacak pembayarannya.'}
+              </DialogDescription>
+            </div>
+          </div>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {serverError && (
-            <div className="text-xs text-[var(--c-accent-2)] bg-red-500/10 p-2 rounded-[var(--radius-sm)]">
+            <div className="flex items-start gap-2.5 rounded-xl border border-[var(--c-accent-2)]/20 bg-[var(--c-accent-2)]/5 p-3.5 text-sm text-[var(--c-accent-2)]">
+              <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
               {serverError}
             </div>
           )}
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-[var(--c-text)]">Nama Utang *</label>
-            <Input placeholder="KPR Rumah, Pinjaman Motor..." {...register('name')} />
-          </div>
+          <Input
+            label="Nama Utang"
+            placeholder="KPR Rumah, Pinjaman Motor..."
+            error={undefined}
+            {...register('name')}
+          />
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-[var(--c-text)]">Kreditur</label>
-            <Input placeholder="Bank ABC, teman..." {...register('creditor')} />
+          <Input
+            label="Kreditur"
+            placeholder="Bank ABC, teman..."
+            {...register('creditor')}
+          />
+
+          {/* Loan amount - prominent */
+          <div className="rounded-xl border border-[var(--c-border)]/50 bg-[var(--c-surface)]/50 p-4">
+            <label className="block text-xs font-semibold text-[var(--c-text-muted)] uppercase tracking-wider mb-2">Jumlah Pinjaman</label>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-[var(--c-text-muted)]">Rp</span>
+              <input
+                type="number"
+                placeholder="0"
+                className="flex h-12 w-full rounded-xl border border-[var(--c-border)]/50 bg-white pl-8 pr-3 text-xl font-bold shadow-sm transition-all dark:bg-[#2e333b] placeholder:text-[var(--c-text-muted)]/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--c-accent)]/30 focus-visible:border-[var(--c-accent)]"
+                {...register('total_amount')}
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-[var(--c-text)]">Jumlah Pinjaman (Rp) *</label>
-              <Input type="number" placeholder="10000000" {...register('total_amount')} />
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-[var(--c-text)]">Bunga (%) / tahun</label>
+              <div className="flex items-center gap-1.5">
+                <Calculator className="h-3.5 w-3.5 text-[var(--c-text-muted)]" />
+                <label className="text-sm font-medium text-[var(--c-text)]">Bunga (%/tahun)</label>
+              </div>
               <Input type="number" step="0.01" placeholder="0" {...register('interest_rate')} />
             </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-[var(--c-text)]">Tenor (bulan) *</label>
+              <div className="flex items-center gap-1.5">
+                <CalendarDays className="h-3.5 w-3.5 text-[var(--c-text-muted)]" />
+                <label className="text-sm font-medium text-[var(--c-text)]">Tenor (bulan)</label>
+              </div>
               <Input type="number" placeholder="12" {...register('tenure_months')} />
             </div>
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-[var(--c-text)]">Sisa Saldo (Rp)</label>
-              <Input type="number" placeholder="= jumlah pinjaman" {...register('remaining_balance')} />
-            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
+            <Input label="Sisa Saldo (Rp)" type="number" placeholder="= jumlah pinjaman" {...register('remaining_balance')} />
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-[var(--c-text)]">Tanggal Mulai</label>
-              <Input type="date" {...register('start_date')} />
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium text-[var(--c-text)]">Tgl Jatuh Tempo</label>
+              <label className="block text-sm font-medium text-[var(--c-text)]">Tgl Jatuh Tempo</label>
               <Input type="number" min={1} max={28} placeholder="1-28" {...register('due_day')} />
             </div>
           </div>
 
-          {/* Preview monthly payment */}
+          <Input label="Tanggal Mulai" type="date" {...register('start_date')} />
+
+          {/* Estimation preview */
           {totalAmount > 0 && tenureMonths > 0 && (
-            <div className="bg-[var(--c-surface)] rounded-[var(--radius-md)] p-3 text-center">
-              <p className="text-[10px] text-[var(--c-text-muted)]">Estimasi cicilan/bulan</p>
-              <p className="text-lg font-bold text-[var(--c-text)] tabular-nums">
-                Rp {Math.round(estimatedMonthly).toLocaleString('id-ID')}
-              </p>
+            <div className="rounded-xl bg-gradient-to-br from-orange-500/5 to-amber-500/5 border border-orange-500/10 p-4 space-y-3">
+              <div className="flex items-center gap-2 text-xs font-semibold text-orange-600 dark:text-orange-400 uppercase tracking-wider">
+                <Calculator className="h-3.5 w-3.5" />
+                Estimasi Cicilan
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="text-center">
+                  <p className="text-[10px] text-[var(--c-text-muted)]">Cicilan/bulan</p>
+                  <p className="text-base font-bold text-[var(--c-text)] tabular-nums">
+                    Rp {Math.round(estimatedMonthly).toLocaleString('id-ID')}
+                  </p>
+                </div>
+                <div className="text-center">
+                  <p className="text-[10px] text-[var(--c-text-muted)]">Total bayar</p>
+                  <p className="text-base font-bold text-[var(--c-text)] tabular-nums">
+                    Rp {Math.round(totalPayment).toLocaleString('id-ID')}
+                  </p>
+                </div>
+                <div className="text-center">
+                  <p className="text-[10px] text-[var(--c-text-muted)]">Total bunga</p>
+                  <p className="text-base font-bold text-[var(--c-accent-2)] tabular-nums">
+                    Rp {Math.round(totalInterest).toLocaleString('id-ID')}
+                  </p>
+                </div>
+              </div>
             </div>
           )}
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-[var(--c-text)]">Catatan</label>
-            <Input placeholder="Opsional..." {...register('note')} />
+          <div className="flex items-center gap-1.5">
+            <FileText className="h-3.5 w-3.5 text-[var(--c-text-muted)]" />
+            <Input label="Catatan" placeholder="Opsional..." {...register('note')} />
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="ghost" onClick={() => { reset(); onOpenChange(false) }}>
+            <Button type="button" variant="outline" onClick={() => { reset(); onOpenChange(false) }}>
               Batal
             </Button>
-            <Button type="submit" variant="primary" disabled={isLoading}>
+            <Button type="submit" variant="primary" disabled={isLoading} className="shadow-sm shadow-orange-500/20">
               {isLoading ? 'Menyimpan...' : isEditing ? 'Simpan' : 'Tambah'}
             </Button>
           </DialogFooter>
