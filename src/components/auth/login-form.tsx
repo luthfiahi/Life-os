@@ -40,7 +40,7 @@ export function LoginForm() {
           <span className="text-xl font-black text-white tracking-tight">LO</span>
         </div>
         <h1 className="mt-3 text-2xl font-bold text-[#1A202C]">Life OS</h1>
-        <p className="mt-0.5 text-sm text-[#718096]">Kelola hidupmu dalam satu tempat</p>
+        <p className="mt-0.5 text-sm text-[#718096] whitespace-nowrap">Kelola hidupmu dalam satu tempat</p>
       </div>
 
       {/* User Avatar Circle */}
@@ -109,7 +109,7 @@ export function LoginForm() {
         </div>
 
         {/* Options Row */}
-        <div className="flex items-center justify-between pt-1">
+        <div className="flex items-center justify-between pt-1 gap-3">
           <button
             type="button"
             onClick={() => setRememberMe(!rememberMe)}
@@ -124,7 +124,7 @@ export function LoginForm() {
             </div>
             <span className="text-sm font-medium text-[#2E86DE]">Ingat saya</span>
           </button>
-          <Link href="/auth/forgot-password" className="text-sm font-medium text-[#2E86DE] hover:text-[#1a6bb5] transition-colors">
+          <Link href="/auth/forgot-password" className="text-sm font-medium text-[#2E86DE] hover:text-[#1a6bb5] transition-colors whitespace-nowrap ml-auto">
             Lupa password?
           </Link>
         </div>
