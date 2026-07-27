@@ -14,6 +14,10 @@ const features = [
   { icon: CalendarDays, label: 'Schedule', color: 'from-blue-400 to-cyan-500' },
 ]
 
+function FeatureIcon({ icon: Icon }: { icon: typeof Wallet }) {
+  return <Icon className="h-2.5 w-2.5 text-white" />
+}
+
 export function LoginForm() {
   const { signInWithEmail, loading, error, clearError } = useAuth()
   const [email, setEmail] = useState('')
@@ -47,7 +51,7 @@ export function LoginForm() {
       </div>
 
       {/* Card */}
-      <div className="relative rounded-2xl border border-[var(--c-border)] bg-white/80 backdrop-blur-sm p-7 shadow-[var(--shadow-elevated)] dark:bg-[var(--c-card)]/80 dark:backdrop-blur-sm">
+      <div className="relative rounded-2xl border border-[var(--c-border)] bg-white p-7 shadow-[var(--shadow-elevated)] dark:bg-[var(--c-card)]">
         {/* Subtle gradient border accent at top */}
         <div className="absolute top-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-[var(--c-accent)]/40 to-transparent" />
 
@@ -142,7 +146,7 @@ export function LoginForm() {
           >
             <div className={`h-4 w-4 rounded-full bg-gradient-to-br ${f.color} flex items-center justify-center shadow-sm`}
             >
-              <f.icon className="h-2.5 w-2.5 text-white" />
+              <FeatureIcon icon={f.icon} />
             </div>
             {f.label}
           </div>

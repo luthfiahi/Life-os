@@ -162,7 +162,7 @@ export function PaymentFormDialog({ open, onOpenChange, debt }: PaymentFormDialo
               <input
                 type="number"
                 placeholder={String(debt ? debt.monthly_payment : '')}
-                className="flex h-12 w-full rounded-xl border border-[var(--c-border)]/50 bg-white pl-8 pr-3 text-xl font-bold shadow-sm transition-all dark:bg-[#2e333b] placeholder:text-[var(--c-text-muted)]/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30 focus-visible:border-emerald-500"
+                className="flex h-12 w-full rounded-xl border border-[var(--c-border)]/50 bg-white text-[var(--c-text)] pl-8 pr-3 text-xl font-bold shadow-sm transition-all dark:bg-[#2e333b] placeholder:text-[var(--c-text-muted)]/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30 focus-visible:border-emerald-500"
                 {...register('amount')}
               />
             </div>

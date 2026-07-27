@@ -213,7 +213,7 @@ export function TransactionFormDialog({ open, onOpenChange, transaction, default
                 type="number"
                 placeholder="0"
                 className={cn(
-                  'flex h-12 w-full rounded-xl border bg-white pl-8 pr-3 text-xl font-bold shadow-sm transition-all dark:bg-[#2e333b]',
+                  'flex h-12 w-full rounded-xl border bg-white text-[var(--c-text)] pl-8 pr-3 text-xl font-bold shadow-sm transition-all dark:bg-[#2e333b]',
                   'placeholder:text-[var(--c-text-muted)]/40',
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--c-accent)]/30 focus-visible:border-[var(--c-accent)]',
                   errors.amount ? 'border-[var(--c-accent-2)]' : 'border-[var(--c-border)]/50'
@@ -263,7 +263,7 @@ export function TransactionFormDialog({ open, onOpenChange, transaction, default
                 <input
                   type="text"
                   placeholder="Nama kategori"
-                  className="flex h-10 flex-1 rounded-xl border border-[var(--c-border)]/50 bg-white px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--c-accent)]/30 focus-visible:border-[var(--c-accent)] dark:bg-[#2e333b]"
+                  className="flex h-10 flex-1 rounded-xl border border-[var(--c-border)]/50 bg-white text-[var(--c-text)] px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--c-accent)]/30 focus-visible:border-[var(--c-accent)] dark:bg-[#2e333b]"
                   value={newCategoryName}
                   onChange={(e) => setNewCategoryName(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddCategory())}
