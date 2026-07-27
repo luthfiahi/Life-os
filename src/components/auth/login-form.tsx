@@ -14,9 +14,11 @@ export function LoginForm() {
   const [isDark, setIsDark] = useState(false)
 
   useEffect(() => {
-    const check = () => setIsDark(document.documentElement.classList.contains('dark'))
-    check()
-    const obs = new MutationObserver(check)
+    const check = document.documentElement.classList.contains('dark')
+    setIsDark(check)
+    const obs = new MutationObserver(() => {
+      setIsDark(document.documentElement.classList.contains('dark'))
+    })
     obs.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
     return () => obs.disconnect()
   }, [])
