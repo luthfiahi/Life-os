@@ -75,7 +75,7 @@ export function Modal({
       aria-describedby={description ? 'modal-description' : undefined}
     >
       {/* Overlay */}
-      <div className="fixed inset-0 bg-black/50" aria-hidden="true" />
+      <div className="fixed inset-0 bg-black/70" aria-hidden="true" />
 
       {/* Content */}
       <div
