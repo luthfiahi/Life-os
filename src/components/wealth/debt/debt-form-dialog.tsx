@@ -153,7 +153,7 @@ export function DebtFormDialog({ open, onOpenChange, editDebt }: DebtFormDialogP
             {...register('creditor')}
           />
 
-          {/* Loan amount - prominent */
+          {/* Loan amount - prominent */}
           <div className="rounded-xl border border-[var(--c-border)]/50 bg-[var(--c-surface)]/50 p-4">
             <label className="block text-xs font-semibold text-[var(--c-text-muted)] uppercase tracking-wider mb-2">Jumlah Pinjaman</label>
             <div className="relative">
@@ -194,7 +194,7 @@ export function DebtFormDialog({ open, onOpenChange, editDebt }: DebtFormDialogP
 
           <Input label="Tanggal Mulai" type="date" {...register('start_date')} />
 
-          {/* Estimation preview */
+          {/* Estimation preview */}
           {totalAmount > 0 && tenureMonths > 0 && (
             <div className="rounded-xl bg-gradient-to-br from-orange-500/5 to-amber-500/5 border border-orange-500/10 p-4 space-y-3">
               <div className="flex items-center gap-2 text-xs font-semibold text-orange-600 dark:text-orange-400 uppercase tracking-wider">

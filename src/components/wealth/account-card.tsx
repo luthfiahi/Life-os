@@ -22,18 +22,14 @@ interface AccountCardProps {
 export function AccountCard({ account, onEdit, onDelete }: AccountCardProps) {
   const config = accountTypeConfig[account.type]
   const TypeIcon = config.icon
+  const gradientStrip = account.type === 'bank' ? 'from-blue-500 to-blue-400' : account.type === 'cash' ? 'from-emerald-500 to-emerald-400' : account.type === 'ewallet' ? 'from-violet-500 to-violet-400' : 'from-amber-500 to-amber-400'
 
   return (
     <div className={cn(
       'group relative overflow-hidden rounded-2xl border border-[var(--c-border)] bg-white transition-all duration-200 hover:shadow-md hover:border-[var(--c-accent)]/20 dark:bg-[var(--c-card)]',
     )}>
       {/* Gradient accent strip */}
-      <div className={cn('absolute top-0 left-0 right-0 h-1 bg-gradient-to-r opacity-80',
-        account.type === 'bank' ? 'from-blue-500 to-blue-400',
-        account.type === 'cash' ? 'from-emerald-500 to-emerald-400',
-        account.type === 'ewallet' ? 'from-violet-500 to-violet-400',
-        'from-amber-500 to-amber-400'
-      )} />
+      <div className={cn('absolute top-0 left-0 right-0 h-1 bg-gradient-to-r opacity-80', gradientStrip)} />
 
       <div className="p-4">
         <div className="flex items-start justify-between gap-3">
