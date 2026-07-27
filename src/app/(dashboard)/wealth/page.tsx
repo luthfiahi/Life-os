@@ -477,7 +477,7 @@ export default function WealthPage() {
   return (
     <div className="animate-fade-in -m-4 lg:-m-6">
       {/* ─── Header Bar ─── */}
-      <div className="sticky top-0 z-10 bg-[var(--c-bg)]/80 backdrop-blur-md border-b border-[var(--c-border)] px-4 lg:px-6 py-3">
+      <div className="sticky top-0 z-10 bg-[var(--c-bg)] border-b border-[var(--c-border)] px-4 lg:px-6 py-3">
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2">

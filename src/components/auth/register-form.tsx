@@ -68,7 +68,7 @@ export function RegisterForm() {
       <div className="rounded-2xl border border-[var(--c-border)] bg-white p-6 shadow-[var(--shadow-elevated)] dark:bg-[var(--c-card)]">
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="rounded-xl border border-[var(--c-accent-2)]/30 bg-[var(--c-accent-2)]/5 p-3 text-sm text-[var(--c-accent-2)] animate-fade-in" role="alert">
+            <div className="rounded-xl border border-[var(--c-accent-2)] bg-[var(--c-accent-2)]/10 p-3 text-sm text-[var(--c-accent-2)] animate-fade-in" role="alert">
               {error}
             </div>
           )}

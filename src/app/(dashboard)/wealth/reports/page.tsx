@@ -51,7 +51,7 @@ export default function ReportsPage() {
       </div>
 
       {/* Coming Soon Banner */}
-      <Card className="p-5 bg-[var(--c-accent)]/5 border-[var(--c-accent)]/20">
+      <Card className="p-5 bg-[var(--c-accent)]/10 border-[var(--c-accent)]/30">
         <div className="flex items-start gap-3">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-md)] bg-[var(--c-accent)]/10">
             <FileBarChart className="h-5 w-5 text-[var(--c-accent)]" />
@@ -71,7 +71,7 @@ export default function ReportsPage() {
         {reportTemplates.map((report) => {
           const Icon = report.icon
           return (
-            <Card key={report.title} className="group p-4 transition-all duration-200 hover:border-[var(--c-accent)]/20">
+            <Card key={report.title} className="group p-4 transition-all duration-200 hover:border-[var(--c-accent)]/30">
               <div className="flex items-center gap-4">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-md)] bg-[var(--c-surface)]">
                   <Icon className="h-5 w-5 text-[var(--c-text-muted)]" />

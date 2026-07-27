@@ -147,7 +147,7 @@ export function AccountFormDialog({ open, onOpenChange, account }: AccountFormDi
                     key={type}
                     type="button"
                     onClick={() => setValue('type', type)}
-                    className={"flex flex-col items-center gap-1.5 rounded-xl border-2 p-3 transition-all duration-200 " + (isActive ? "border-[var(--c-accent)] bg-[var(--c-accent)]/5 shadow-sm" : "border-[var(--c-border)]/50 bg-[var(--c-surface)]/50 hover:border-[var(--c-border)]")}
+                    className={"flex flex-col items-center gap-1.5 rounded-xl border-2 p-3 transition-all duration-200 " + (isActive ? "border-[var(--c-accent)] bg-[var(--c-accent)]/10 shadow-sm" : "border-[var(--c-border)] bg-[var(--c-surface)] hover:border-[var(--c-text-muted)]")}
                   >
                     <div className={"h-8 w-8 rounded-lg bg-gradient-to-br " + tc.gradient + " flex items-center justify-center transition-transform " + (isActive ? 'scale-110' : 'scale-100')}>
                       <TypeIcon type={type} />

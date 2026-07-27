@@ -108,7 +108,7 @@ export function PaymentFormDialog({ open, onOpenChange, debt }: PaymentFormDialo
         </DialogHeader>
 
         {debt && (
-          <div className="rounded-xl border border-[var(--c-border)]/50 bg-[var(--c-surface)]/50 p-4 space-y-3">
+          <div className="rounded-xl border border-[var(--c-border)] bg-[var(--c-surface)] p-4 space-y-3">
             <div className="flex items-center justify-between">
               <p className="text-sm font-semibold text-[var(--c-text)]">{debt.name}</p>
               <span className={cn(
@@ -134,11 +134,11 @@ export function PaymentFormDialog({ open, onOpenChange, debt }: PaymentFormDialo
               </div>
             </div>
             <div className="grid grid-cols-2 gap-2">
-              <div className="rounded-lg bg-white/60 dark:bg-white/5 p-2.5">
+              <div className="rounded-lg bg-[var(--c-surface)] p-2.5">
                 <p className="text-[10px] text-[var(--c-text-muted)]">Sisa saldo</p>
                 <p className="text-sm font-bold text-[var(--c-text)] tabular-nums">{formatRupiah(remaining)}</p>
               </div>
-              <div className="rounded-lg bg-white/60 dark:bg-white/5 p-2.5">
+              <div className="rounded-lg bg-[var(--c-surface)] p-2.5">
                 <p className="text-[10px] text-[var(--c-text-muted)]">Cicilan/bulan</p>
                 <p className="text-sm font-bold text-[var(--c-text)] tabular-nums">{formatRupiah(Number(debt.monthly_payment))}</p>
               </div>
@@ -148,21 +148,21 @@ export function PaymentFormDialog({ open, onOpenChange, debt }: PaymentFormDialo
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {serverError && (
-            <div className="flex items-start gap-2.5 rounded-xl border border-[var(--c-accent-2)]/20 bg-[var(--c-accent-2)]/5 p-3.5 text-sm text-[var(--c-accent-2)]">
+            <div className="flex items-start gap-2.5 rounded-xl border border-[var(--c-accent-2)] bg-[var(--c-accent-2)]/10 p-3.5 text-sm text-[var(--c-accent-2)]">
               <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
               {serverError}
             </div>
           )}
 
           {/* Amount input - prominent */}
-          <div className="rounded-xl border border-[var(--c-border)]/50 bg-[var(--c-surface)]/50 p-4">
+          <div className="rounded-xl border border-[var(--c-border)] bg-[var(--c-surface)] p-4">
             <label className="block text-xs font-semibold text-[var(--c-text-muted)] uppercase tracking-wider mb-2">Jumlah Bayar</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-[var(--c-text-muted)]">Rp</span>
               <input
                 type="number"
                 placeholder={String(debt ? debt.monthly_payment : '')}
-                className="flex h-12 w-full rounded-xl border border-[var(--c-border)]/50 bg-white text-[var(--c-text)] pl-8 pr-3 text-xl font-bold shadow-sm transition-all dark:bg-[#2e333b] placeholder:text-[var(--c-text-muted)]/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30 focus-visible:border-emerald-500"
+                className="flex h-12 w-full rounded-xl border border-[var(--c-border)] bg-white text-[var(--c-text)] pl-8 pr-3 text-xl font-bold shadow-sm transition-all dark:bg-[#2e333b] placeholder:text-[var(--c-text-muted)]/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30 focus-visible:border-emerald-500"
                 {...register('amount')}
               />
             </div>
@@ -172,8 +172,8 @@ export function PaymentFormDialog({ open, onOpenChange, debt }: PaymentFormDialo
             <div className={cn(
               'rounded-xl p-4 text-center space-y-1 border transition-all',
               willBePaidOff
-                ? 'bg-emerald-500/5 border-emerald-500/20'
-                : 'bg-[var(--c-surface)]/50 border-[var(--c-border)]/50'
+                ? 'bg-emerald-500/10 border-emerald-500/30'
+                : 'bg-[var(--c-surface)] border-[var(--c-border)]'
             )}>
               {willBePaidOff ? (
                 <>

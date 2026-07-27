@@ -118,7 +118,7 @@ export function BudgetFormDialog({ open, onOpenChange, budget }: BudgetFormDialo
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           {/* Amount - prominent */}
-          <div className="rounded-xl border border-[var(--c-border)]/50 bg-[var(--c-surface)]/50 p-4">
+          <div className="rounded-xl border border-[var(--c-border)] bg-[var(--c-surface)] p-4">
             <label className="block text-xs font-semibold text-[var(--c-text-muted)] uppercase tracking-wider mb-2">Jumlah Budget</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-[var(--c-text-muted)]">Rp</span>
@@ -129,7 +129,7 @@ export function BudgetFormDialog({ open, onOpenChange, budget }: BudgetFormDialo
                   'flex h-12 w-full rounded-xl border bg-white text-[var(--c-text)] pl-8 pr-3 text-xl font-bold shadow-sm transition-all dark:bg-[#2e333b]'
                   + ' placeholder:text-[var(--c-text-muted)]/40'
                   + ' focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--c-accent)]/30 focus-visible:border-[var(--c-accent)]'
-                  + (errors.amount ? ' border-[var(--c-accent-2)]' : ' border-[var(--c-border)]/50')
+                  + (errors.amount ? ' border-[var(--c-accent-2)]' : ' border-[var(--c-border)]')
                 }
                 {...register('amount')}
               />
@@ -144,7 +144,7 @@ export function BudgetFormDialog({ open, onOpenChange, budget }: BudgetFormDialo
               <button
                 type="button"
                 onClick={() => setValue('period', 'monthly')}
-                className={`flex items-center justify-center gap-2 rounded-xl border-2 py-3 text-sm font-semibold transition-all duration-200 ${selectedPeriod === 'monthly' ? 'border-[var(--c-accent)] bg-[var(--c-accent)]/5 text-[var(--c-accent)]' : 'border-[var(--c-border)]/50 text-[var(--c-text-muted)] hover:border-[var(--c-border)]'}`}
+                className={`flex items-center justify-center gap-2 rounded-xl border-2 py-3 text-sm font-semibold transition-all duration-200 ${selectedPeriod === 'monthly' ? 'border-[var(--c-accent)] bg-[var(--c-accent)]/10 text-[var(--c-accent)]' : 'border-[var(--c-border)] text-[var(--c-text-muted)] hover:border-[var(--c-text-muted)]'}`}
               >
                 <CalendarCheck className="h-4 w-4" />
                 Bulanan
@@ -152,7 +152,7 @@ export function BudgetFormDialog({ open, onOpenChange, budget }: BudgetFormDialo
               <button
                 type="button"
                 onClick={() => setValue('period', 'weekly')}
-                className={`flex items-center justify-center gap-2 rounded-xl border-2 py-3 text-sm font-semibold transition-all duration-200 ${selectedPeriod === 'weekly' ? 'border-[var(--c-accent)] bg-[var(--c-accent)]/5 text-[var(--c-accent)]' : 'border-[var(--c-border)]/50 text-[var(--c-text-muted)] hover:border-[var(--c-border)]'}`}
+                className={`flex items-center justify-center gap-2 rounded-xl border-2 py-3 text-sm font-semibold transition-all duration-200 ${selectedPeriod === 'weekly' ? 'border-[var(--c-accent)] bg-[var(--c-accent)]/10 text-[var(--c-accent)]' : 'border-[var(--c-border)] text-[var(--c-text-muted)] hover:border-[var(--c-text-muted)]'}`}
               >
                 <Clock className="h-4 w-4" />
                 Mingguan
@@ -177,7 +177,7 @@ export function BudgetFormDialog({ open, onOpenChange, budget }: BudgetFormDialo
           </div>
 
           {watchedAmount > 1000 && selectedPeriod === 'monthly' && (
-            <div className="rounded-lg bg-violet-500/5 border border-violet-500/10 px-4 py-3">
+            <div className="rounded-lg bg-violet-500/10 border border-violet-500/20 px-4 py-3">
               <p className="text-xs text-[var(--c-text-muted)]">Setara dengan ~<span className="font-semibold text-[var(--c-text)]">Rp {weeklyEquiv.toLocaleString('id-ID')}</span> per minggu</p>
             </div>
           )}

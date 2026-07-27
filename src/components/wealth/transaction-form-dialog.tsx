@@ -175,7 +175,7 @@ export function TransactionFormDialog({ open, onOpenChange, transaction, default
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           {/* Type Toggle - Premium pill style */}
-          <div className="p-1 rounded-xl bg-[var(--c-surface)] border border-[var(--c-border)]/40">
+          <div className="p-1 rounded-xl bg-[var(--c-surface)] border border-[var(--c-border)]">
             <div className="relative grid grid-cols-2">
               <button
                 type="button"
@@ -205,7 +205,7 @@ export function TransactionFormDialog({ open, onOpenChange, transaction, default
           </div>
 
           {/* Amount - prominent card */}
-          <div className="rounded-xl border border-[var(--c-border)]/50 bg-[var(--c-surface)]/50 p-4">
+          <div className="rounded-xl border border-[var(--c-border)] bg-[var(--c-surface)] p-4">
             <label className="block text-xs font-semibold text-[var(--c-text-muted)] uppercase tracking-wider mb-2">Jumlah</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-[var(--c-text-muted)]">Rp</span>
@@ -216,7 +216,7 @@ export function TransactionFormDialog({ open, onOpenChange, transaction, default
                   'flex h-12 w-full rounded-xl border bg-white text-[var(--c-text)] pl-8 pr-3 text-xl font-bold shadow-sm transition-all dark:bg-[#2e333b]',
                   'placeholder:text-[var(--c-text-muted)]/40',
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--c-accent)]/30 focus-visible:border-[var(--c-accent)]',
-                  errors.amount ? 'border-[var(--c-accent-2)]' : 'border-[var(--c-border)]/50'
+                  errors.amount ? 'border-[var(--c-accent-2)]' : 'border-[var(--c-border)]'
                 )}
                 {...register('amount')}
               />
@@ -263,7 +263,7 @@ export function TransactionFormDialog({ open, onOpenChange, transaction, default
                 <input
                   type="text"
                   placeholder="Nama kategori"
-                  className="flex h-10 flex-1 rounded-xl border border-[var(--c-border)]/50 bg-white text-[var(--c-text)] px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--c-accent)]/30 focus-visible:border-[var(--c-accent)] dark:bg-[#2e333b]"
+                  className="flex h-10 flex-1 rounded-xl border border-[var(--c-border)] bg-white text-[var(--c-text)] px-3 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--c-accent)]/30 focus-visible:border-[var(--c-accent)] dark:bg-[#2e333b]"
                   value={newCategoryName}
                   onChange={(e) => setNewCategoryName(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddCategory())}

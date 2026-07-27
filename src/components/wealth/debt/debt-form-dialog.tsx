@@ -134,7 +134,7 @@ export function DebtFormDialog({ open, onOpenChange, editDebt }: DebtFormDialogP
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {serverError && (
-            <div className="flex items-start gap-2.5 rounded-xl border border-[var(--c-accent-2)]/20 bg-[var(--c-accent-2)]/5 p-3.5 text-sm text-[var(--c-accent-2)]">
+            <div className="flex items-start gap-2.5 rounded-xl border border-[var(--c-accent-2)] bg-[var(--c-accent-2)]/10 p-3.5 text-sm text-[var(--c-accent-2)]">
               <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
               {serverError}
             </div>
@@ -154,14 +154,14 @@ export function DebtFormDialog({ open, onOpenChange, editDebt }: DebtFormDialogP
           />
 
           {/* Loan amount - prominent */}
-          <div className="rounded-xl border border-[var(--c-border)]/50 bg-[var(--c-surface)]/50 p-4">
+          <div className="rounded-xl border border-[var(--c-border)] bg-[var(--c-surface)] p-4">
             <label className="block text-xs font-semibold text-[var(--c-text-muted)] uppercase tracking-wider mb-2">Jumlah Pinjaman</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-[var(--c-text-muted)]">Rp</span>
               <input
                 type="number"
                 placeholder="0"
-                className="flex h-12 w-full rounded-xl border border-[var(--c-border)]/50 bg-white text-[var(--c-text)] pl-8 pr-3 text-xl font-bold shadow-sm transition-all dark:bg-[#2e333b] placeholder:text-[var(--c-text-muted)]/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--c-accent)]/30 focus-visible:border-[var(--c-accent)]"
+                className="flex h-12 w-full rounded-xl border border-[var(--c-border)] bg-white text-[var(--c-text)] pl-8 pr-3 text-xl font-bold shadow-sm transition-all dark:bg-[#2e333b] placeholder:text-[var(--c-text-muted)]/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--c-accent)]/30 focus-visible:border-[var(--c-accent)]"
                 {...register('total_amount')}
               />
             </div>
@@ -196,7 +196,7 @@ export function DebtFormDialog({ open, onOpenChange, editDebt }: DebtFormDialogP
 
           {/* Estimation preview */}
           {totalAmount > 0 && tenureMonths > 0 && (
-            <div className="rounded-xl bg-gradient-to-br from-orange-500/5 to-amber-500/5 border border-orange-500/10 p-4 space-y-3">
+            <div className="rounded-xl bg-orange-500/10 border border-orange-500/20 p-4 space-y-3">
               <div className="flex items-center gap-2 text-xs font-semibold text-orange-600 dark:text-orange-400 uppercase tracking-wider">
                 <Calculator className="h-3.5 w-3.5" />
                 Estimasi Cicilan

@@ -176,7 +176,7 @@ export function InsightPanel() {
       )}
 
       {/* Financial Tip */}
-      <Card className="p-4 bg-[var(--c-accent)]/5 border-[var(--c-accent)]/20">
+      <Card className="p-4 bg-[var(--c-accent)]/10 border-[var(--c-accent)]/30">
         <div className="flex gap-3">
           <Lightbulb className="h-4 w-4 text-[var(--c-accent)] shrink-0 mt-0.5" />
           <div>
