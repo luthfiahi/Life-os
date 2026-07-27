@@ -54,22 +54,36 @@ function DialogContent({
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
   showCloseButton?: boolean
 }) {
+  const [bgColor, setBgColor] = React.useState('white')
+
+  React.useEffect(() => {
+    const check = () => {
+      const isDark = document.documentElement.classList.contains('dark')
+      setBgColor(isDark ? '#24282e' : 'white')
+    }
+    check()
+    const obs = new MutationObserver(check)
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+    return () => obs.disconnect()
+  }, [])
+
   return (
     <DialogPortal data-slot="dialog-portal">
       <DialogOverlay />
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          "bg-white data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-5 rounded-2xl border border-[var(--c-border)] p-6 shadow-[var(--shadow-modal)] duration-200 dark:bg-[var(--c-surface)] sm:max-w-lg",
+          "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-1.5rem)] translate-x-[-50%] translate-y-[-50%] gap-5 rounded-2xl border border-[var(--c-border)] p-6 shadow-[var(--shadow-modal)] duration-200 sm:max-w-lg",
           className
         )}
+        style={{ backgroundColor: bgColor }}
         {...props}
       >
         {children}
         {showCloseButton && (
           <DialogPrimitive.Close
             data-slot="dialog-close"
-            className="absolute top-4 right-4 h-7 w-7 rounded-lg flex items-center justify-center opacity-40 transition-all hover:opacity-80 hover:bg-[var(--c-surface)] dark:hover:bg-white/10 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none"
+            className="absolute top-4 right-4 h-7 w-7 rounded-lg flex items-center justify-center opacity-40 transition-all hover:opacity-80 hover:bg-black/5 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none"
           >
             <XIcon className="h-4 w-4" />
             <span className="sr-only">Close</span>

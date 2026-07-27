@@ -159,7 +159,7 @@ export function TransactionFormDialog({ open, onOpenChange, transaction, default
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-lg">
         <DialogHeader>
           <div className="flex items-center gap-3">
             <div className={`h-10 w-10 rounded-xl flex items-center justify-center shadow-sm ${isExpense ? 'bg-gradient-to-br from-rose-500 to-red-500' : 'bg-gradient-to-br from-emerald-500 to-green-500'}`}>
