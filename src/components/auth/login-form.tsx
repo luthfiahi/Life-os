@@ -4,14 +4,8 @@ import { useState } from 'react'
 import { useAuth } from '@/hooks/use-auth'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Eye, EyeOff, LogIn } from 'lucide-react'
+import { Eye, EyeOff, LogIn, Sparkles, Shield, Zap } from 'lucide-react'
 import Link from 'next/link'
-
-/**
- * Life OS Login Form
- * Email/password authentication with Supabase Auth
- */
 
 export function LoginForm() {
   const { signInWithEmail, loading, error, clearError } = useAuth()
@@ -22,38 +16,36 @@ export function LoginForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     clearError()
-
-    if (!email || !password) {
-      return
-    }
-
+    if (!email || !password) return
     await signInWithEmail(email, password)
   }
 
   return (
-    <Card className="w-full max-w-md border-0 shadow-[var(--shadow-elevated)]">
-      <CardHeader className="text-center pb-2">
-        {/* Life OS Logo / Brand */}
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-[var(--radius-lg)] bg-[var(--c-accent)]">
-          <span className="text-xl font-bold text-white font-[family-name:var(--font-playfair)]">
-            LO
-          </span>
+    <div className="w-full max-w-md animate-fade-in">
+      {/* Brand Section */}
+      <div className="text-center mb-8">
+        <div className="relative inline-flex">
+          <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-[var(--c-accent)] to-[#1a6d94] flex items-center justify-center shadow-lg">
+            <span className="text-2xl font-black text-white tracking-tight">LO</span>
+          </div>
+          <div className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-amber-400 flex items-center justify-center">
+            <Sparkles className="h-3 w-3 text-white" />
+          </div>
         </div>
-        <CardTitle className="text-xl text-[var(--c-text)]">
-          Masuk ke Life OS
-        </CardTitle>
-        <CardDescription>
-          Masukkan email dan password untuk melanjutkan
-        </CardDescription>
-      </CardHeader>
+        <h1 className="mt-5 text-2xl font-bold text-[var(--c-text)]">Life OS</h1>
+        <p className="mt-1 text-sm text-[var(--c-text-muted)]">Kelola hidupmu dalam satu tempat</p>
+      </div>
 
-      <CardContent>
+      {/* Card */}
+      <div className="rounded-2xl border border-[var(--c-border)] bg-white p-6 shadow-[var(--shadow-elevated)] dark:bg-[var(--c-card)]">
+        <div className="mb-5">
+          <h2 className="text-lg font-semibold text-[var(--c-text)]">Masuk</h2>
+          <p className="text-sm text-[var(--c-text-muted)] mt-0.5">Masukkan email dan password untuk melanjutkan</p>
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div
-              className="rounded-[var(--radius-md)] border border-[var(--c-accent-2)]/30 bg-[var(--c-accent-2)]/5 p-3 text-sm text-[var(--c-accent-2)] animate-fade-in"
-              role="alert"
-            >
+            <div className="rounded-xl border border-[var(--c-accent-2)]/30 bg-[var(--c-accent-2)]/5 p-3 text-sm text-[var(--c-accent-2)] animate-fade-in" role="alert">
               {error}
             </div>
           )}
@@ -89,41 +81,33 @@ export function LoginForm() {
               tabIndex={-1}
             >
               {showPassword ? (
-                <>
-                  <EyeOff className="h-3 w-3" />
-                  Sembunyikan
-                </>
+                <><EyeOff className="h-3 w-3" /> Sembunyikan</>
               ) : (
-                <>
-                  <Eye className="h-3 w-3" />
-                  Tampilkan
-                </>
+                <><Eye className="h-3 w-3" /> Tampilkan</>
               )}
             </button>
           </div>
 
-          <Button
-            type="submit"
-            variant="primary"
-            size="lg"
-            className="w-full"
-            loading={loading}
-          >
+          <Button type="submit" variant="primary" size="lg" className="w-full rounded-xl" loading={loading}>
             <LogIn className="h-4 w-4" />
             Masuk
           </Button>
 
           <p className="text-center text-sm text-[var(--c-text-muted)]">
             Belum punya akun?{' '}
-            <Link
-              href="/auth/register"
-              className="font-medium text-[var(--c-accent)] hover:underline"
-            >
+            <Link href="/auth/register" className="font-semibold text-[var(--c-accent)] hover:underline">
               Daftar sekarang
             </Link>
           </p>
         </form>
-      </CardContent>
-    </Card>
+      </div>
+
+      {/* Feature Pills */}
+      <div className="mt-6 flex items-center justify-center gap-4 text-[10px] text-[var(--c-text-muted)]">
+        <div className="flex items-center gap-1"><Shield className="h-3 w-3" /> Aman</div>
+        <div className="flex items-center gap-1"><Zap className="h-3 w-3" /> Cepat</div>
+        <div className="flex items-center gap-1"><Sparkles className="h-3 w-3" /> Gratis</div>
+      </div>
+    </div>
   )
 }
