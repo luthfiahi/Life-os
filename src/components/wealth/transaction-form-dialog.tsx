@@ -20,7 +20,6 @@ import {
 import { useAuth } from '@/hooks/use-auth'
 import { useAccounts, useCategories, useCreateCategory } from '@/lib/queries/wealth-queries'
 import { useCreateTransaction, useUpdateTransaction } from '@/lib/queries/wealth-queries'
-import { formatRupiah } from '@/lib/services/wealth.service'
 import type { TransactionRow, TransactionType, CategoryType } from '@/lib/types/wealth'
 
 const txSchema = z.object({
@@ -42,12 +41,13 @@ interface TransactionFormDialogProps {
   defaultType?: TransactionType
 }
 
-const QUICK_AMOUNTS = [50000, 100000, 500000, 1000000]
-
-/** Full Rupiah format for chips (not abbreviated) */
-function formatChipAmount(n: number): string {
-  return 'Rp ' + n.toLocaleString('id-ID')
+/** Full Rupiah format for chips and preview (proper thousands separator) */
+function formatRupiahFull(n: number): string {
+  if (n === 0) return 'Rp 0'
+  return 'Rp ' + Math.round(n).toLocaleString('id-ID')
 }
+
+const QUICK_AMOUNTS = [50000, 100000, 500000, 1000000]
 
 /* eslint-disable react-hooks/incompatible-library */
 export function TransactionFormDialog({ open, onOpenChange, transaction, defaultType }: TransactionFormDialogProps) {
@@ -195,7 +195,7 @@ export function TransactionFormDialog({ open, onOpenChange, transaction, default
             'text-lg font-bold tabular-nums',
             isExpense ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400',
           )}>
-            {watchedAmount ? formatRupiah(watchedAmount) : 'Rp 0'}
+            {formatRupiahFull(watchedAmount || 0)}
           </p>
         </div>
 
@@ -207,7 +207,7 @@ export function TransactionFormDialog({ open, onOpenChange, transaction, default
           <p className="text-sm font-semibold text-[var(--c-text)]">{selectedAccount?.name ?? '—'}</p>
           {selectedAccount && (
             <p className="text-[11px] text-[var(--c-text-muted)] mt-0.5">
-              Saldo: {formatRupiah(Number(selectedAccount.balance))}
+              Saldo: {formatRupiahFull(Number(selectedAccount.balance))}
             </p>
           )}
         </div>
@@ -242,7 +242,7 @@ export function TransactionFormDialog({ open, onOpenChange, transaction, default
         <div>
           <p className="text-[11px] font-semibold text-[var(--c-text-muted)] uppercase tracking-wider mb-1.5">Perkiraan Saldo</p>
           <p className="text-base font-bold text-[var(--c-text)] tabular-nums">
-            {remainingBalance !== null ? formatRupiah(remainingBalance) : '—'}
+            {remainingBalance !== null ? formatRupiahFull(remainingBalance) : '—'}
           </p>
           {selectedAccount && watchedAmount > 0 && (
             <p className={cn(
@@ -254,8 +254,8 @@ export function TransactionFormDialog({ open, onOpenChange, transaction, default
               {remainingBalance !== null && remainingBalance < 0
                 ? 'Saldo tidak cukup!'
                 : isExpense
-                  ? '-' + formatRupiah(watchedAmount) + ' dari saldo'
-                  : '+' + formatRupiah(watchedAmount) + ' ke saldo'}
+                  ? '-' + formatRupiahFull(watchedAmount) + ' dari saldo'
+                  : '+' + formatRupiahFull(watchedAmount) + ' ke saldo'}
             </p>
           )}
         </div>
@@ -377,7 +377,7 @@ export function TransactionFormDialog({ open, onOpenChange, transaction, default
                         onClick={() => handleQuickAmount(amt)}
                         className="inline-flex items-center rounded-lg border border-[var(--c-border)] bg-[var(--c-surface)] px-3 py-1.5 text-xs font-semibold text-[var(--c-text)] transition-all duration-150 hover:border-[var(--c-accent)] hover:text-[var(--c-accent)] hover:bg-[var(--c-accent)]/5 active:scale-[0.97]"
                       >
-                        {formatChipAmount(amt)}
+                        {formatRupiahFull(amt)}
                       </button>
                     ))}
                   </div>
