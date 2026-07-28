@@ -6,10 +6,10 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Landmark, Calculator, CalendarDays, FileText, AlertCircle, CheckCircle2 } from 'lucide-react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
+import { Landmark, Calculator, CalendarDays, FileText, AlertCircle, PenLine, User, Coins, Calendar, Hash, StickyNote } from 'lucide-react'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { cn } from '@/lib/utils'
 import { useAuth } from '@/hooks/use-auth'
 import { useCreateDebt, useUpdateDebt } from '@/lib/queries/debt-queries'
 import type { DebtRow } from '@/lib/types/wealth'
@@ -42,7 +42,7 @@ export function DebtFormDialog({ open, onOpenChange, editDebt }: DebtFormDialogP
 
   const isEditing = !!editDebt
 
-  const { register, handleSubmit, reset, watch } = useForm<DebtFormValues>({
+  const { register, handleSubmit, reset, watch, formState: { errors } } = useForm<DebtFormValues>({
     resolver: zodResolver(debtSchema),
     defaultValues: editDebt
       ? {
@@ -116,127 +116,275 @@ export function DebtFormDialog({ open, onOpenChange, editDebt }: DebtFormDialogP
 
   const isLoading = createDebt.isPending || updateDebt.isPending
 
+  /* - Shared Styles - */
+  const inputBase = cn(
+    'flex w-full rounded-xl border border-[var(--c-border)] bg-white px-4 text-sm shadow-sm',
+    'transition-all duration-200 dark:bg-[#2e333b]',
+    'placeholder:text-[var(--c-text-muted)]',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--c-accent)]/30 focus-visible:border-[var(--c-accent)]',
+  )
+  const inputError = 'border-red-500 focus-visible:ring-red-500/30 focus-visible:border-red-500'
+  const inputStyle = { color: 'var(--c-text)' }
+
   return (
     <Dialog open={open} onOpenChange={(v) => { if (!v) reset(); onOpenChange(v) }}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-sm">
-              <Landmark className="h-5 w-5 text-white" />
-            </div>
-            <div>
-              <DialogTitle>{isEditing ? 'Edit Utang' : 'Tambah Utang'}</DialogTitle>
-              <DialogDescription>
-                {isEditing ? 'Ubah detail pinjaman kamu.' : 'Catat pinjaman dan lacak pembayarannya.'}
-              </DialogDescription>
+      <DialogContent className="flex flex-col gap-0 overflow-hidden p-0 sm:max-w-[560px] max-h-[97dvh] sm:max-h-[92vh]">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-1 min-h-0">
+
+          {/* === HEADER === */}
+          <div className="flex-shrink-0 px-6 pt-6 pb-4">
+            <div className="flex items-center gap-4">
+              <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-lg transition-all duration-300 flex-shrink-0">
+                <Landmark className="h-6 w-6 text-white" />
+              </div>
+              <div className="min-w-0">
+                <DialogTitle className="text-xl font-bold tracking-tight">
+                  {isEditing ? 'Edit Utang' : 'Tambah Utang'}
+                </DialogTitle>
+                <DialogDescription className="text-sm mt-0.5">
+                  {isEditing ? 'Ubah detail pinjaman kamu.' : 'Catat pinjaman dan lacak pembayarannya.'}
+                </DialogDescription>
+              </div>
             </div>
           </div>
-        </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {serverError && (
-            <div className="flex items-start gap-2.5 rounded-xl border border-[var(--c-accent-2)] bg-[var(--c-accent-2)]/10 p-3.5 text-sm text-[var(--c-accent-2)]">
-              <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
-              {serverError}
+
+          {/* === SCROLLABLE CONTENT === */}
+          <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-6 pb-6 space-y-6">
+
+            {serverError && (
+              <div className="flex items-start gap-2.5 rounded-xl border border-[var(--c-accent-2)] bg-[var(--c-accent-2)]/10 p-3.5 text-sm text-[var(--c-accent-2)]">
+                <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+                {serverError}
+              </div>
+            )}
+
+            {/* - Nama Utang + Kreditur - */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-semibold text-[var(--c-text)]">
+                  <PenLine className="h-4 w-4 text-[var(--c-text-muted)]" />
+                  Nama Utang
+                </label>
+                <input
+                  type="text"
+                  placeholder="KPR Rumah, Pinjaman..."
+                  className={cn('h-12', inputBase, errors.name && inputError)}
+                  style={inputStyle}
+                  {...register('name')}
+                />
+                <p className="text-xs text-[var(--c-text-muted)] pl-1">Nama pinjaman yang mudah dikenali.</p>
+                {errors.name && (
+                  <p className="flex items-center gap-1 text-xs text-red-500 pl-1" role="alert">
+                    <AlertCircle className="h-3 w-3 flex-shrink-0" />
+                    {errors.name.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-semibold text-[var(--c-text)]">
+                  <User className="h-4 w-4 text-[var(--c-text-muted)]" />
+                  Kreditur
+                </label>
+                <input
+                  type="text"
+                  placeholder="Bank ABC, teman..."
+                  className={cn('h-12', inputBase)}
+                  style={inputStyle}
+                  {...register('creditor')}
+                />
+                <p className="text-xs text-[var(--c-text-muted)] pl-1">Pihak yang memberi pinjaman.</p>
+              </div>
             </div>
-          )}
 
-          <Input
-            label="Nama Utang"
-            placeholder="KPR Rumah, Pinjaman Motor..."
-            error={undefined}
-            {...register('name')}
-          />
+            {/* - Jumlah Pinjaman (prominent) - */}
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 text-xs font-bold text-[var(--c-text-muted)] uppercase tracking-wider">
+                <Coins className="h-3.5 w-3.5" />
+                Jumlah Pinjaman
+              </label>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-lg font-bold text-[var(--c-text-muted)] select-none pointer-events-none">Rp</span>
+                <input
+                  type="number"
+                  placeholder="0"
+                  className={cn(
+                    'h-14 pl-12 pr-4 text-2xl font-bold tabular-nums',
+                    inputBase,
+                    errors.total_amount && inputError,
+                  )}
+                  style={inputStyle}
+                  {...register('total_amount')}
+                />
+              </div>
+              <p className="text-xs text-[var(--c-text-muted)] pl-1">Total jumlah yang dipinjam.</p>
+              {errors.total_amount && (
+                <p className="flex items-center gap-1 text-xs text-red-500 pl-1" role="alert">
+                  <AlertCircle className="h-3 w-3 flex-shrink-0" />
+                  {errors.total_amount.message}
+                </p>
+              )}
+            </div>
 
-          <Input
-            label="Kreditur"
-            placeholder="Bank ABC, teman..."
-            {...register('creditor')}
-          />
+            {/* - Bunga + Tenor - */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-semibold text-[var(--c-text)]">
+                  <Calculator className="h-4 w-4 text-[var(--c-text-muted)]" />
+                  Bunga (%/tahun)
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  placeholder="0"
+                  className={cn('h-12', inputBase)}
+                  style={inputStyle}
+                  {...register('interest_rate')}
+                />
+                <p className="text-xs text-[var(--c-text-muted)] pl-1">Tarif bunga per tahun.</p>
+              </div>
 
-          {/* Loan amount - prominent */}
-          <div className="rounded-xl border border-[var(--c-border)] bg-[var(--c-surface)] p-4">
-            <label className="block text-xs font-semibold text-[var(--c-text-muted)] uppercase tracking-wider mb-2">Jumlah Pinjaman</label>
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-[var(--c-text-muted)]">Rp</span>
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-semibold text-[var(--c-text)]">
+                  <CalendarDays className="h-4 w-4 text-[var(--c-text-muted)]" />
+                  Tenor (bulan)
+                </label>
+                <input
+                  type="number"
+                  placeholder="12"
+                  className={cn('h-12', inputBase, errors.tenure_months && inputError)}
+                  style={inputStyle}
+                  {...register('tenure_months')}
+                />
+                <p className="text-xs text-[var(--c-text-muted)] pl-1">Durasi cicilan.</p>
+                {errors.tenure_months && (
+                  <p className="flex items-center gap-1 text-xs text-red-500 pl-1" role="alert">
+                    <AlertCircle className="h-3 w-3 flex-shrink-0" />
+                    {errors.tenure_months.message}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* - Sisa Saldo + Tgl Jatuh Tempo - */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-semibold text-[var(--c-text)]">
+                  <Hash className="h-4 w-4 text-[var(--c-text-muted)]" />
+                  Sisa Saldo (Rp)
+                </label>
+                <input
+                  type="number"
+                  placeholder="= jumlah pinjaman"
+                  className={cn('h-12', inputBase)}
+                  style={inputStyle}
+                  {...register('remaining_balance')}
+                />
+                <p className="text-xs text-[var(--c-text-muted)] pl-1">Kosongkan jika sama dengan pinjaman.</p>
+              </div>
+
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-sm font-semibold text-[var(--c-text)]">
+                  <Calendar className="h-4 w-4 text-[var(--c-text-muted)]" />
+                  Tgl Jatuh Tempo
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  max={28}
+                  placeholder="1-28"
+                  className={cn('h-12', inputBase)}
+                  style={inputStyle}
+                  {...register('due_day')}
+                />
+                <p className="text-xs text-[var(--c-text-muted)] pl-1">Tanggal bayar cicilan tiap bulan.</p>
+              </div>
+            </div>
+
+            {/* - Tanggal Mulai - */}
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 text-sm font-semibold text-[var(--c-text)]">
+                <Calendar className="h-4 w-4 text-[var(--c-text-muted)]" />
+                Tanggal Mulai
+              </label>
               <input
-                type="number"
-                placeholder="0"
-                className="flex h-12 w-full rounded-xl border border-[var(--c-border)] bg-white text-[var(--c-text)] pl-8 pr-3 text-xl font-bold shadow-sm transition-all dark:bg-[#2e333b] placeholder:text-[var(--c-text-muted)]/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--c-accent)]/30 focus-visible:border-[var(--c-accent)]"
-                {...register('total_amount')}
+                type="date"
+                className={cn('h-12', inputBase)}
+                style={inputStyle}
+                {...register('start_date')}
               />
+              <p className="text-xs text-[var(--c-text-muted)] pl-1">Tanggal pertama kali cicilan.</p>
             </div>
-          </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <div className="flex items-center gap-1.5">
-                <Calculator className="h-3.5 w-3.5 text-[var(--c-text-muted)]" />
-                <label className="text-sm font-medium text-[var(--c-text)]">Bunga (%/tahun)</label>
-              </div>
-              <Input type="number" step="0.01" placeholder="0" {...register('interest_rate')} />
-            </div>
-            <div className="space-y-1.5">
-              <div className="flex items-center gap-1.5">
-                <CalendarDays className="h-3.5 w-3.5 text-[var(--c-text-muted)]" />
-                <label className="text-sm font-medium text-[var(--c-text)]">Tenor (bulan)</label>
-              </div>
-              <Input type="number" placeholder="12" {...register('tenure_months')} />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <Input label="Sisa Saldo (Rp)" type="number" placeholder="= jumlah pinjaman" {...register('remaining_balance')} />
-            <div className="space-y-1.5">
-              <label className="block text-sm font-medium text-[var(--c-text)]">Tgl Jatuh Tempo</label>
-              <Input type="number" min={1} max={28} placeholder="1-28" {...register('due_day')} />
-            </div>
-          </div>
-
-          <Input label="Tanggal Mulai" type="date" {...register('start_date')} />
-
-          {/* Estimation preview */}
-          {totalAmount > 0 && tenureMonths > 0 && (
-            <div className="rounded-xl bg-orange-500/10 border border-orange-500/20 p-4 space-y-3">
-              <div className="flex items-center gap-2 text-xs font-semibold text-orange-600 dark:text-orange-400 uppercase tracking-wider">
-                <Calculator className="h-3.5 w-3.5" />
-                Estimasi Cicilan
-              </div>
-              <div className="grid grid-cols-3 gap-3">
-                <div className="text-center">
-                  <p className="text-[10px] text-[var(--c-text-muted)]">Cicilan/bulan</p>
-                  <p className="text-base font-bold text-[var(--c-text)] tabular-nums">
-                    Rp {Math.round(estimatedMonthly).toLocaleString('id-ID')}
-                  </p>
+            {/* - Estimation Preview - */}
+            {totalAmount > 0 && tenureMonths > 0 && (
+              <div className="rounded-2xl bg-orange-500/10 border border-orange-500/20 p-5 space-y-4">
+                <div className="flex items-center gap-2 text-xs font-bold text-orange-600 dark:text-orange-400 uppercase tracking-wider">
+                  <Calculator className="h-3.5 w-3.5" />
+                  Estimasi Cicilan
                 </div>
-                <div className="text-center">
-                  <p className="text-[10px] text-[var(--c-text-muted)]">Total bayar</p>
-                  <p className="text-base font-bold text-[var(--c-text)] tabular-nums">
-                    Rp {Math.round(totalPayment).toLocaleString('id-ID')}
-                  </p>
-                </div>
-                <div className="text-center">
-                  <p className="text-[10px] text-[var(--c-text-muted)]">Total bunga</p>
-                  <p className="text-base font-bold text-[var(--c-accent-2)] tabular-nums">
-                    Rp {Math.round(totalInterest).toLocaleString('id-ID')}
-                  </p>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="text-center">
+                    <p className="text-[11px] font-semibold text-[var(--c-text-muted)] mb-1">Cicilan/bulan</p>
+                    <p className="text-lg font-bold text-[var(--c-text)] tabular-nums">
+                      Rp {Math.round(estimatedMonthly).toLocaleString('id-ID')}
+                    </p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-[11px] font-semibold text-[var(--c-text-muted)] mb-1">Total bayar</p>
+                    <p className="text-lg font-bold text-[var(--c-text)] tabular-nums">
+                      Rp {Math.round(totalPayment).toLocaleString('id-ID')}
+                    </p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-[11px] font-semibold text-[var(--c-text-muted)] mb-1">Total bunga</p>
+                    <p className="text-lg font-bold text-[var(--c-accent-2)] tabular-nums">
+                      Rp {Math.round(totalInterest).toLocaleString('id-ID')}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          <div className="flex items-center gap-1.5">
-            <FileText className="h-3.5 w-3.5 text-[var(--c-text-muted)]" />
-            <Input label="Catatan" placeholder="Opsional..." {...register('note')} />
+            {/* - Catatan - */}
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 text-sm font-semibold text-[var(--c-text)]">
+                <StickyNote className="h-4 w-4 text-[var(--c-text-muted)]" />
+                Catatan <span className="text-xs font-normal text-[var(--c-text-muted)]">(opsional)</span>
+              </label>
+              <input
+                type="text"
+                placeholder="Opsional..."
+                className={cn('h-12', inputBase)}
+                style={inputStyle}
+                {...register('note')}
+              />
+              <p className="text-xs text-[var(--c-text-muted)] pl-1">Info tambahan tentang pinjaman.</p>
+            </div>
+
           </div>
 
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => { reset(); onOpenChange(false) }}>
-              Batal
-            </Button>
-            <Button type="submit" variant="primary" disabled={isLoading} className="shadow-sm shadow-orange-500/20">
-              {isLoading ? 'Menyimpan...' : isEditing ? 'Simpan' : 'Tambah'}
-            </Button>
-          </DialogFooter>
+          {/* === FIXED FOOTER === */}
+          <div className="flex-shrink-0 border-t border-[var(--c-border)] px-6 py-4">
+            <div className="flex items-center gap-3 justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => { reset(); onOpenChange(false) }}
+                className="rounded-xl h-11 px-5"
+              >
+                Batal
+              </Button>
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="rounded-xl h-11 px-6 shadow-lg shadow-orange-500/20"
+              >
+                {isEditing ? 'Simpan Perubahan' : 'Tambah Utang'}
+              </Button>
+            </div>
+          </div>
+
         </form>
       </DialogContent>
     </Dialog>

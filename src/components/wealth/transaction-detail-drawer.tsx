@@ -1,8 +1,7 @@
 'use client'
 
-import { X, ArrowUpRight, ArrowDownRight, Wallet, Tag, Calendar, FileText, Repeat } from 'lucide-react'
+import { ArrowUpRight, ArrowDownRight, Wallet, Tag, Calendar, StickyNote, Repeat, Edit, Trash2 } from 'lucide-react'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
-import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
 import { formatRupiah } from '@/lib/services/wealth.service'
@@ -53,135 +52,143 @@ export function TransactionDetailDrawer({
     }
   }
 
+  function formatTypeColor(type: string) {
+    switch (type) {
+      case 'income': return 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+      case 'expense': return 'bg-rose-500/10 text-rose-600 dark:text-rose-400'
+      case 'transfer': return 'bg-blue-500/10 text-blue-600 dark:text-blue-400'
+      default: return 'bg-[var(--c-surface)] text-[var(--c-text-muted)]'
+    }
+  }
+
+  function DetailRow({ icon: Icon, label, children }: { icon: React.ElementType; label: string; children: React.ReactNode }) {
+    return (
+      <div className="flex items-center justify-between py-3">
+        <div className="flex items-center gap-3 text-[var(--c-text-muted)]">
+          <div className="h-8 w-8 rounded-lg bg-[var(--c-surface)] flex items-center justify-center">
+            <Icon className="h-4 w-4" />
+          </div>
+          <span className="text-sm font-medium">{label}</span>
+        </div>
+        <div className="text-sm font-semibold text-[var(--c-text)] text-right max-w-[60%] truncate">
+          {children}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-full sm:max-w-md bg-[var(--c-surface)] border-[var(--c-border)] p-0">
-        {/* Header with amount */}
-        <div className="p-5 pb-4">
-          <div className="flex items-center justify-between mb-6">
-            <SheetTitle className="text-sm font-semibold text-[var(--c-text)]">
-              Detail Transaksi
-            </SheetTitle>
-          </div>
 
-          {/* Amount display */}
-          <div className="flex items-center gap-3 mb-4">
-            <div className={cn(
-              'flex h-12 w-12 items-center justify-center rounded-xl shrink-0',
-              isTransfer ? 'bg-[var(--c-accent)]/10' :
-              isExpense ? 'bg-[var(--c-accent-2)]/10' : 'bg-emerald-500/10'
-            )}>
-              {isTransfer ? (
-                <Repeat className="h-5 w-5 text-[var(--c-accent)]" />
-              ) : isExpense ? (
-                <ArrowDownRight className="h-5 w-5 text-[var(--c-accent-2)]" />
-              ) : (
-                <ArrowUpRight className="h-5 w-5 text-emerald-500" />
-              )}
-            </div>
+        {/* ═══ HEADER ═══ */}
+        <div className="px-6 pt-6 pb-5">
+          <SheetTitle className="text-lg font-bold text-[var(--c-text)] tracking-tight mb-5">
+            Detail Transaksi
+          </SheetTitle>
+
+          {/* Amount + Type Badge */}
+          <div className="flex items-start justify-between">
             <div>
               <p className={cn(
-                'text-2xl font-bold tabular-nums',
+                'text-3xl font-bold tabular-nums tracking-tight',
                 isTransfer ? 'text-[var(--c-accent)]' :
-                isExpense ? 'text-[var(--c-accent-2)]' : 'text-emerald-500'
+                isExpense ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400',
               )}>
                 {isExpense ? '-' : isTransfer ? '' : '+'}{formatRupiah(Number(transaction.amount))}
               </p>
-              <Badge variant="outline" className="mt-1 text-[10px]">
+              <div className={cn(
+                'inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold mt-2',
+                formatTypeColor(transaction.type),
+              )}>
+                {isTransfer ? <Repeat className="h-3 w-3" /> : isExpense ? <ArrowDownRight className="h-3 w-3" /> : <ArrowUpRight className="h-3 w-3" />}
                 {formatType(transaction.type)}
-              </Badge>
+              </div>
+            </div>
+            <div className={cn(
+              'flex h-12 w-12 items-center justify-center rounded-2xl shrink-0 shadow-sm',
+              isTransfer ? 'bg-[var(--c-accent)]/10' :
+              isExpense ? 'bg-rose-500/10' : 'bg-emerald-500/10',
+            )}>
+              {isTransfer ? (
+                <Repeat className="h-6 w-6 text-[var(--c-accent)]" />
+              ) : isExpense ? (
+                <ArrowDownRight className="h-6 w-6 text-rose-500" />
+              ) : (
+                <ArrowUpRight className="h-6 w-6 text-emerald-500" />
+              )}
             </div>
           </div>
 
           {/* Description */}
-          <p className="text-base font-medium text-[var(--c-text)]">
+          <p className="text-base font-semibold text-[var(--c-text)] mt-4">
             {transaction.description || 'Tanpa deskripsi'}
           </p>
         </div>
 
         <Separator className="bg-[var(--c-border)]" />
 
-        {/* Details */}
-        <div className="p-5 space-y-4">
-          {/* Category */}
+        {/* ═══ DETAILS ═══ */}
+        <div className="px-6 py-2">
           {category && (
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-[var(--c-text-muted)]">
-                <Tag className="h-4 w-4" />
-                <span className="text-sm">Kategori</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div
-                  className="h-3 w-3 rounded-full shrink-0"
-                  style={{ backgroundColor: category.color }}
-                />
-                <span className="text-sm font-medium text-[var(--c-text)]">{category.name}</span>
-              </div>
-            </div>
+            <DetailRow icon={Tag} label="Kategori">
+              <span className="flex items-center gap-2 justify-end">
+                {category.color && <div className="h-3 w-3 rounded-full shrink-0" style={{ backgroundColor: category.color }} />}
+                {category.name}
+              </span>
+            </DetailRow>
           )}
 
-          {/* Account */}
           {account && (
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-[var(--c-text-muted)]">
-                <Wallet className="h-4 w-4" />
-                <span className="text-sm">Akun</span>
-              </div>
-              <span className="text-sm font-medium text-[var(--c-text)]">{account.name}</span>
-            </div>
+            <DetailRow icon={Wallet} label="Akun">
+              {account.name}
+            </DetailRow>
           )}
 
-          {/* Date */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-[var(--c-text-muted)]">
-              <Calendar className="h-4 w-4" />
-              <span className="text-sm">Tanggal</span>
-            </div>
-            <span className="text-sm font-medium text-[var(--c-text)]">{formatDate(transaction.date)}</span>
-          </div>
+          <DetailRow icon={Calendar} label="Tanggal">
+            {formatDate(transaction.date)}
+          </DetailRow>
 
-          {/* Note */}
           {transaction.note && (
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex items-center gap-2 text-[var(--c-text-muted)]">
-                <FileText className="h-4 w-4 shrink-0 mt-0.5" />
-                <span className="text-sm">Catatan</span>
-              </div>
-              <span className="text-sm text-[var(--c-text)] text-right">{transaction.note}</span>
-            </div>
+            <DetailRow icon={StickyNote} label="Catatan">
+              {transaction.note}
+            </DetailRow>
           )}
         </div>
 
-        <Separator className="bg-[var(--c-border)]" />
-
-        {/* Actions */}
+        {/* ═══ ACTIONS ═══ */}
         {(onEdit || onDelete) && (
-          <div className="p-5 flex gap-2">
-            {onEdit && (
-              <Button
-                variant="secondary"
-                className="flex-1"
-                onClick={() => {
-                  onOpenChange(false)
-                  onEdit(transaction)
-                }}
-              >
-                Edit
-              </Button>
-            )}
-            {onDelete && (
-              <Button
-                variant="destructive"
-                className="flex-1"
-                onClick={() => {
-                  onOpenChange(false)
-                  onDelete(transaction.id)
-                }}
-              >
-                Hapus
-              </Button>
-            )}
-          </div>
+          <>
+            <Separator className="bg-[var(--c-border)]" />
+            <div className="px-6 py-5 flex gap-3">
+              {onEdit && (
+                <Button
+                  variant="outline"
+                  className="flex-1 h-11 rounded-xl"
+                  onClick={() => {
+                    onOpenChange(false)
+                    onEdit(transaction)
+                  }}
+                >
+                  <Edit className="h-4 w-4" />
+                  Edit
+                </Button>
+              )}
+              {onDelete && (
+                <Button
+                  variant="destructive"
+                  className="flex-1 h-11 rounded-xl"
+                  onClick={() => {
+                    onOpenChange(false)
+                    onDelete(transaction.id)
+                  }}
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Hapus
+                </Button>
+              )}
+            </div>
+          </>
         )}
       </SheetContent>
     </Sheet>

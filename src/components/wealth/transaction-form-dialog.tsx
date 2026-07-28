@@ -157,7 +157,7 @@ export function TransactionFormDialog({ open, onOpenChange, transaction, default
     } catch { /* silent */ }
   }
 
-  /* ──────────── Shared Styles ──────────── */
+  /* ------ Shared Styles ------ */
   const inputBase = cn(
     'flex w-full rounded-xl border border-[var(--c-border)] bg-white px-4 text-sm shadow-sm',
     'transition-all duration-200 dark:bg-[#2e333b]',
@@ -167,7 +167,7 @@ export function TransactionFormDialog({ open, onOpenChange, transaction, default
   const inputError = 'border-red-500 focus-visible:ring-red-500/30 focus-visible:border-red-500'
   const inputStyle = { color: 'var(--c-text)' }
 
-  /* ──────────── Preview Renderer ──────────── */
+  /* ------ Preview Renderer ------ */
   function renderPreview() {
     return (
       <div className="space-y-4">
@@ -263,7 +263,7 @@ export function TransactionFormDialog({ open, onOpenChange, transaction, default
     )
   }
 
-  /* ──────────── JSX ──────────── */
+  /* ------ JSX ------ */
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
@@ -275,7 +275,7 @@ export function TransactionFormDialog({ open, onOpenChange, transaction, default
       >
         <form onSubmit={handleSubmit(onSubmitForm)} className="flex flex-col flex-1 min-h-0">
 
-          {/* ═══════ HEADER ═══════ */}
+          {/* ======= HEADER ======= */}
           <div className="flex-shrink-0 px-6 pt-6 pb-4 sm:pb-5">
             <div className="flex items-center gap-4">
               <div className={cn(
@@ -299,14 +299,14 @@ export function TransactionFormDialog({ open, onOpenChange, transaction, default
             </div>
           </div>
 
-          {/* ═══════ SCROLLABLE CONTENT ═══════ */}
+          {/* ======= SCROLLABLE CONTENT ======= */}
           <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain">
             <div className="flex flex-col lg:flex-row">
 
-              {/* ──── FORM FIELDS ──── */}
+              {/* -- FORM FIELDS -- */}
               <div className="flex-1 min-w-0 px-6 pb-6 space-y-6">
 
-                {/* ── Transaction Type Toggle ── */}
+                {/* - Transaction Type Toggle - */}
                 <div className="p-1 rounded-2xl bg-[var(--c-surface)] border border-[var(--c-border)]">
                   <div className="relative grid grid-cols-2">
                     <button
@@ -344,7 +344,7 @@ export function TransactionFormDialog({ open, onOpenChange, transaction, default
                   </div>
                 </div>
 
-                {/* ── Amount Field ── */}
+                {/* - Amount Field - */}
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-xs font-bold text-[var(--c-text-muted)] uppercase tracking-wider">
                     <Hash className="h-3.5 w-3.5" />
@@ -390,7 +390,7 @@ export function TransactionFormDialog({ open, onOpenChange, transaction, default
                   )}
                 </div>
 
-                {/* ── Account + Category ── */}
+                {/* - Account + Category - */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Account */}
                   <div className="space-y-2">
@@ -480,7 +480,7 @@ export function TransactionFormDialog({ open, onOpenChange, transaction, default
                   </div>
                 </div>
 
-                {/* ── Description ── */}
+                {/* - Description - */}
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-sm font-semibold text-[var(--c-text)]">
                     <FileText className="h-4 w-4 text-[var(--c-text-muted)]" />
@@ -502,7 +502,7 @@ export function TransactionFormDialog({ open, onOpenChange, transaction, default
                   )}
                 </div>
 
-                {/* ── Date + Note ── */}
+                {/* - Date + Note - */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Date */}
                   <div className="space-y-2">
@@ -544,7 +544,7 @@ export function TransactionFormDialog({ open, onOpenChange, transaction, default
 
               </div>
 
-              {/* ──── LIVE PREVIEW PANEL ──── */}
+              {/* -- LIVE PREVIEW PANEL -- */}
               <div className="lg:w-[260px] lg:min-w-[260px] flex-shrink-0">
                 {/* Mobile: collapsible preview below form */}
                 <div className="lg:hidden">
@@ -580,7 +580,7 @@ export function TransactionFormDialog({ open, onOpenChange, transaction, default
             </div>
           </div>
 
-          {/* ═══════ FIXED FOOTER BUTTONS ═══════ */}
+          {/* ======= FIXED FOOTER BUTTONS ======= */}
           <div className="flex-shrink-0 border-t border-[var(--c-border)] px-6 py-4">
             <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 sm:justify-end">
               <Button
