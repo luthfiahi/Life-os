@@ -131,7 +131,7 @@ export function DebtFormDialog({ open, onOpenChange, editDebt }: DebtFormDialogP
       <DialogContent className="flex flex-col gap-0 overflow-hidden p-0 sm:max-w-[560px] max-h-[97dvh] sm:max-h-[92vh]">
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-1 min-h-0">
 
-          {/* === HEADER === */}
+          
           <div className="flex-shrink-0 px-6 pt-6 pb-4">
             <div className="flex items-center gap-4">
               <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-lg transition-all duration-300 flex-shrink-0">
@@ -148,7 +148,7 @@ export function DebtFormDialog({ open, onOpenChange, editDebt }: DebtFormDialogP
             </div>
           </div>
 
-          {/* === SCROLLABLE CONTENT === */}
+          
           <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-6 pb-6 space-y-6">
 
             {serverError && (
@@ -158,7 +158,7 @@ export function DebtFormDialog({ open, onOpenChange, editDebt }: DebtFormDialogP
               </div>
             )}
 
-            {/* - Nama Utang + Kreditur - */}
+            
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-sm font-semibold text-[var(--c-text)]">
@@ -197,7 +197,7 @@ export function DebtFormDialog({ open, onOpenChange, editDebt }: DebtFormDialogP
               </div>
             </div>
 
-            {/* - Jumlah Pinjaman (prominent) - */}
+            
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-xs font-bold text-[var(--c-text-muted)] uppercase tracking-wider">
                 <Coins className="h-3.5 w-3.5" />
@@ -226,7 +226,7 @@ export function DebtFormDialog({ open, onOpenChange, editDebt }: DebtFormDialogP
               )}
             </div>
 
-            {/* - Bunga + Tenor - */}
+            
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-sm font-semibold text-[var(--c-text)]">
@@ -266,7 +266,7 @@ export function DebtFormDialog({ open, onOpenChange, editDebt }: DebtFormDialogP
               </div>
             </div>
 
-            {/* - Sisa Saldo + Tgl Jatuh Tempo - */}
+            
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-sm font-semibold text-[var(--c-text)]">
@@ -301,7 +301,7 @@ export function DebtFormDialog({ open, onOpenChange, editDebt }: DebtFormDialogP
               </div>
             </div>
 
-            {/* - Tanggal Mulai - */}
+            
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-sm font-semibold text-[var(--c-text)]">
                 <Calendar className="h-4 w-4 text-[var(--c-text-muted)]" />
@@ -316,7 +316,7 @@ export function DebtFormDialog({ open, onOpenChange, editDebt }: DebtFormDialogP
               <p className="text-xs text-[var(--c-text-muted)] pl-1">Tanggal pertama kali cicilan.</p>
             </div>
 
-            {/* - Estimation Preview - */}
+            
             {totalAmount > 0 && tenureMonths > 0 && (
               <div className="rounded-2xl bg-orange-500/10 border border-orange-500/20 p-5 space-y-4">
                 <div className="flex items-center gap-2 text-xs font-bold text-orange-600 dark:text-orange-400 uppercase tracking-wider">
@@ -346,7 +346,7 @@ export function DebtFormDialog({ open, onOpenChange, editDebt }: DebtFormDialogP
               </div>
             )}
 
-            {/* - Catatan - */}
+            
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-sm font-semibold text-[var(--c-text)]">
                 <StickyNote className="h-4 w-4 text-[var(--c-text-muted)]" />
@@ -364,7 +364,7 @@ export function DebtFormDialog({ open, onOpenChange, editDebt }: DebtFormDialogP
 
           </div>
 
-          {/* === FIXED FOOTER === */}
+          
           <div className="flex-shrink-0 border-t border-[var(--c-border)] px-6 py-4">
             <div className="flex items-center gap-3 justify-end">
               <Button

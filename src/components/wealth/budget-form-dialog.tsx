@@ -114,7 +114,7 @@ export function BudgetFormDialog({ open, onOpenChange, budget }: BudgetFormDialo
       <DialogContent className="flex flex-col gap-0 overflow-hidden p-0 sm:max-w-[500px] max-h-[97dvh] sm:max-h-[92vh]">
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-1 min-h-0">
 
-          {/* === HEADER === */}
+          
           <div className="flex-shrink-0 px-6 pt-6 pb-4">
             <div className="flex items-center gap-4">
               <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg transition-all duration-300 flex-shrink-0">
@@ -131,10 +131,10 @@ export function BudgetFormDialog({ open, onOpenChange, budget }: BudgetFormDialo
             </div>
           </div>
 
-          {/* === SCROLLABLE CONTENT === */}
+          
           <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-6 pb-6 space-y-6">
 
-            {/* - Amount - */}
+            
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-xs font-bold text-[var(--c-text-muted)] uppercase tracking-wider">
                 <Hash className="h-3.5 w-3.5" />
@@ -163,7 +163,7 @@ export function BudgetFormDialog({ open, onOpenChange, budget }: BudgetFormDialo
               )}
             </div>
 
-            {/* - Period Toggle - */}
+            
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-sm font-semibold text-[var(--c-text)]">
                 <CalendarCheck className="h-4 w-4 text-[var(--c-text-muted)]" />
@@ -200,7 +200,7 @@ export function BudgetFormDialog({ open, onOpenChange, budget }: BudgetFormDialo
               <p className="text-xs text-[var(--c-text-muted)] pl-1">Frekuensi reset anggaran.</p>
             </div>
 
-            {/* - Category - */}
+            
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-sm font-semibold text-[var(--c-text)]">
                 <Tag className="h-4 w-4 text-[var(--c-text-muted)]" />
@@ -225,7 +225,7 @@ export function BudgetFormDialog({ open, onOpenChange, budget }: BudgetFormDialo
               )}
             </div>
 
-            {/* - Weekly Equivalent Info - */}
+            
             {watchedAmount > 1000 && selectedPeriod === 'monthly' && (
               <div className="rounded-xl bg-violet-500/10 border border-violet-500/20 px-4 py-3">
                 <p className="text-xs text-[var(--c-text-muted)]">
@@ -236,7 +236,7 @@ export function BudgetFormDialog({ open, onOpenChange, budget }: BudgetFormDialo
 
           </div>
 
-          {/* === FIXED FOOTER === */}
+          
           <div className="flex-shrink-0 border-t border-[var(--c-border)] px-6 py-4">
             <div className="flex items-center gap-3 justify-end">
               <Button

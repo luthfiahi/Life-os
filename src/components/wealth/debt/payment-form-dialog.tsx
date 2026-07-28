@@ -103,7 +103,7 @@ export function PaymentFormDialog({ open, onOpenChange, debt }: PaymentFormDialo
     <Dialog open={open} onOpenChange={(v) => { if (!v) reset(); onOpenChange(v) }}>
       <DialogContent className="flex flex-col gap-0 overflow-hidden p-0 sm:max-w-[480px] max-h-[97dvh] sm:max-h-[92vh]">
 
-        {/* === HEADER === */}
+        
         <div className="flex-shrink-0 px-6 pt-6 pb-4">
           <div className="flex items-center gap-4">
             <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-lg transition-all duration-300 flex-shrink-0">
@@ -118,7 +118,7 @@ export function PaymentFormDialog({ open, onOpenChange, debt }: PaymentFormDialo
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-1 min-h-0">
 
-          {/* === SCROLLABLE CONTENT === */}
+          
           <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-6 pb-6 space-y-6">
 
             {serverError && (
@@ -128,7 +128,7 @@ export function PaymentFormDialog({ open, onOpenChange, debt }: PaymentFormDialo
               </div>
             )}
 
-            {/* - Debt Info Card - */}
+            
             {debt && (
               <div className="rounded-2xl border border-[var(--c-border)] bg-[var(--c-surface)] p-4 space-y-3">
                 <div className="flex items-center justify-between">
@@ -167,7 +167,7 @@ export function PaymentFormDialog({ open, onOpenChange, debt }: PaymentFormDialo
               </div>
             )}
 
-            {/* - Jumlah Bayar (prominent) - */}
+            
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-xs font-bold text-[var(--c-text-muted)] uppercase tracking-wider">
                 <Hash className="h-3.5 w-3.5" />
@@ -196,7 +196,7 @@ export function PaymentFormDialog({ open, onOpenChange, debt }: PaymentFormDialo
               )}
             </div>
 
-            {/* - Payment Preview - */}
+            
             {watchedAmount > 0 && (
               <div className={cn(
                 'rounded-2xl p-5 text-center space-y-2 border transition-all',
@@ -222,7 +222,7 @@ export function PaymentFormDialog({ open, onOpenChange, debt }: PaymentFormDialo
               </div>
             )}
 
-            {/* - Tanggal + Catatan - */}
+            
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-sm font-semibold text-[var(--c-text)]">
@@ -255,7 +255,7 @@ export function PaymentFormDialog({ open, onOpenChange, debt }: PaymentFormDialo
 
           </div>
 
-          {/* === FIXED FOOTER === */}
+          
           <div className="flex-shrink-0 border-t border-[var(--c-border)] px-6 py-4">
             <div className="flex items-center gap-3 justify-end">
               <Button
