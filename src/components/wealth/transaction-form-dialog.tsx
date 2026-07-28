@@ -353,7 +353,8 @@ export function TransactionFormDialog({ open, onOpenChange, transaction, default
                   <div className="relative">
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-lg font-bold select-none pointer-events-none" style={{ color: 'var(--c-text-muted)' }}>Rp</span>
                     <input
-                      type="number"
+                      type="text"
+                      inputMode="numeric"
                       placeholder="0"
                       className={cn(
                         'h-16 pl-12 pr-4 text-2xl font-bold tabular-nums',
