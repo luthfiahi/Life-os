@@ -13,13 +13,6 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/hooks/use-auth'
 import { useCreateAccount, useUpdateAccount } from '@/lib/queries/wealth-queries'
@@ -118,7 +111,6 @@ export function AccountFormDialog({ open, onOpenChange, account }: AccountFormDi
 
   const config = accountTypeConfig[selectedType]
 
-  /* - Shared Styles - */
   const inputBase = cn(
     'flex w-full rounded-xl border border-[var(--c-border)] bg-white px-4 text-sm shadow-sm',
     'transition-all duration-200 dark:bg-[#2e333b]',
@@ -154,7 +146,6 @@ export function AccountFormDialog({ open, onOpenChange, account }: AccountFormDi
 
           <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-6 pb-6 space-y-6">
 
-            {/* - Account Type Selector - */
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-sm font-semibold text-[var(--c-text)]">
                 <Wallet className="h-4 w-4 text-[var(--c-text-muted)]" />
@@ -196,7 +187,6 @@ export function AccountFormDialog({ open, onOpenChange, account }: AccountFormDi
               <p className="text-xs text-[var(--c-text-muted)] pl-1">Pilih jenis akun keuangan.</p>
             </div>
 
-            {/* - Nama Akun - */
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-sm font-semibold text-[var(--c-text)]">
                 <PenLine className="h-4 w-4 text-[var(--c-text-muted)]" />
@@ -218,7 +208,6 @@ export function AccountFormDialog({ open, onOpenChange, account }: AccountFormDi
               )}
             </div>
 
-            {/* - Saldo Awal - */
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-sm font-semibold text-[var(--c-text)]">
                 <Coins className="h-4 w-4 text-[var(--c-text-muted)]" />
@@ -243,7 +232,6 @@ export function AccountFormDialog({ open, onOpenChange, account }: AccountFormDi
               )}
             </div>
 
-            {/* - Warna - */
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-sm font-semibold text-[var(--c-text)]">
                 <Palette className="h-4 w-4 text-[var(--c-text-muted)]" />
