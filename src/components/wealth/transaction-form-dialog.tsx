@@ -351,7 +351,7 @@ export function TransactionFormDialog({ open, onOpenChange, transaction, default
                     Jumlah
                   </label>
                   <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-lg font-bold text-[var(--c-text-muted)] select-none pointer-events-none">Rp</span>
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-lg font-bold select-none pointer-events-none" style={{ color: 'var(--c-text-muted)' }}>Rp</span>
                     <input
                       type="number"
                       placeholder="0"
