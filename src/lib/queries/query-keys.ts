@@ -72,6 +72,55 @@ export const wealthKeys = {
     [...wealthKeys.all, 'debt-payments', userId, debtId] as const,
 }
 
+// ─── Mission Domain (Sprint 6) ─────────────────────────────
+
+export const missionKeys = {
+  /** Base key for all mission queries */
+  all: ['mission'] as const,
+
+  /** Missions */
+  missions: (userId: string) => [...missionKeys.all, 'missions', userId] as const,
+  missionList: (userId: string, filters?: { status?: string }) =>
+    [...missionKeys.missions(userId), 'list', filters] as const,
+  missionDetail: (userId: string, id: string) =>
+    [...missionKeys.missions(userId), 'detail', id] as const,
+
+  /** Milestones */
+  milestones: (userId: string) => [...missionKeys.all, 'milestones', userId] as const,
+  milestoneByMission: (userId: string, missionId: string) =>
+    [...missionKeys.milestones(userId), 'by-mission', missionId] as const,
+
+  /** Dashboard Snapshot */
+  snapshot: (userId: string) => [...missionKeys.all, 'snapshot', userId] as const,
+}
+
+/**
+ * Invalidation helpers for Mission domain.
+ */
+export function invalidateMissionQueries(
+  queryClient: import('@tanstack/react-query').QueryClient,
+  userId: string,
+  scopes: Array<'missions' | 'milestones' | 'snapshot'>,
+) {
+  for (const scope of scopes) {
+    switch (scope) {
+      case 'missions':
+        queryClient.invalidateQueries({ queryKey: missionKeys.missions(userId) })
+        break
+      case 'milestones':
+        queryClient.invalidateQueries({ queryKey: missionKeys.milestones(userId) })
+        break
+      case 'snapshot':
+        queryClient.invalidateQueries({ queryKey: missionKeys.snapshot(userId) })
+        break
+    }
+  }
+  // Always invalidate snapshot when mission data changes
+  if (!scopes.includes('snapshot')) {
+    queryClient.invalidateQueries({ queryKey: missionKeys.snapshot(userId) })
+  }
+}
+
 /**
  * Invalidation helpers — use after mutations to refresh related queries.
  *

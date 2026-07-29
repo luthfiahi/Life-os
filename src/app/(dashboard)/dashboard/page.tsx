@@ -5,7 +5,7 @@ import {
   LifeScoreWidget,
   TodayFocusWidget,
   QuickActionsWidget,
-  WealthSnapshotConnected,
+  ConnectedSnapshot,
   RecentActivityWidget,
   AICoachWidget,
 } from '@/components/dashboard'
@@ -73,7 +73,7 @@ export default function DashboardPage() {
 
         {/* Row 3-4: Recent Activity | Snapshot Cards */}
         <RecentActivityWidget />
-        <WealthSnapshotConnected />
+        <ConnectedSnapshot />
       </div>
     </div>
   )
