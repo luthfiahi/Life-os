@@ -5,7 +5,7 @@ import {
   Target, Rocket, Flag, Star, Trophy, Zap, Code, BookOpen, Dumbbell, Heart,
   CalendarDays, Pin, Pencil, Archive, Trash2, CheckCircle2, Flame,
 } from 'lucide-react'
-import { formatDaysRemaining, getPriorityConfig, getStatusConfig } from '@/lib/services/mission.service'
+import { formatDaysRemaining, getPriorityConfig, getStatusConfig, calculateMissionHealth, getCategoryConfig } from '@/lib/services/mission.service'
 import type { MissionRow } from '@/lib/types/mission'
 
 const ICON_MAP: Record<string, React.ElementType> = {
@@ -75,6 +75,8 @@ export function MissionCard({ mission, milestoneCount, onClick, onEdit, onArchiv
   const progressGlow = PROGRESS_GLOW_MAP[mission.color ?? 'blue'] ?? PROGRESS_GLOW_MAP.blue
   const priority = getPriorityConfig(mission.priority)
   const status = getStatusConfig(mission.status)
+  const category = getCategoryConfig(mission.category)
+  const health = calculateMissionHealth(mission)
   const days = formatDaysRemaining(mission.target_date)
   const isOverdue = mission.target_date && new Date(mission.target_date + 'T23:59:59') < new Date() && mission.status === 'active'
   const progressVal = Math.min(Math.round(Number(mission.progress)), 100)
@@ -159,13 +161,36 @@ export function MissionCard({ mission, milestoneCount, onClick, onEdit, onArchiv
 
         {/* Bottom: badges + deadline + milestone count */}
         <div className="flex items-center justify-between flex-wrap gap-2">
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {mission.status === 'active' && (
+              <span className={cn('text-[10px] font-bold px-1.5 py-0.5 rounded-full dark:ring-1 dark:ring-white/5',
+                health.health === 'on_track' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                : health.health === 'at_risk' ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
+                : health.health === 'critical' ? 'bg-orange-500/10 text-orange-600 dark:text-orange-400'
+                : health.health === 'overdue' ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400'
+                : 'bg-[var(--c-surface)] text-[var(--c-text-muted)]'
+              )}>
+                <span className={cn('inline-block rounded-full mr-1',
+                  health.health === 'on_track' ? 'bg-emerald-500'
+                  : health.health === 'at_risk' ? 'bg-amber-500'
+                  : health.health === 'critical' ? 'bg-orange-500'
+                  : health.health === 'overdue' ? 'bg-rose-500'
+                  : 'bg-[var(--c-text-muted)]',
+                  'h-1.5 w-1.5')} />
+                {health.label}
+              </span>
+            )}
             <span className={cn('text-[10px] font-bold px-2 py-0.5 rounded-full dark:ring-1 dark:ring-white/5', priority.bg, priority.color)}>
               {priority.label}
             </span>
             <span className={cn('text-[10px] font-bold px-2 py-0.5 rounded-full dark:ring-1 dark:ring-white/5', status.bg, status.color)}>
               {status.label}
             </span>
+            {mission.category && mission.category !== 'general' && (
+              <span className={cn('text-[10px] font-bold px-2 py-0.5 rounded-full dark:ring-1 dark:ring-white/5', category.bg, category.color)}>
+                {category.label}
+              </span>
+            )}
           </div>
 
           <div className="flex items-center gap-3 text-[11px] text-[var(--c-text-muted)]">

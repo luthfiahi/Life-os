@@ -92,6 +92,9 @@ export const missionKeys = {
 
   /** Dashboard Snapshot */
   snapshot: (userId: string) => [...missionKeys.all, 'snapshot', userId] as const,
+
+  /** Dashboard (Sprint 6B) */
+  dashboard: (userId: string) => [...missionKeys.all, 'dashboard', userId] as const,
 }
 
 /**

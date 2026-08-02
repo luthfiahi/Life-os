@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/hooks/use-auth'
 import { useCreateMission, useUpdateMission } from '@/lib/queries/mission-queries'
-import type { MissionRow, MissionPriority, MissionStatus } from '@/lib/types/mission'
+import type { MissionRow, MissionPriority, MissionStatus, MissionCategory } from '@/lib/types/mission'
 
 const ICON_PRESETS = [
   { value: 'Target', Icon: Target },
@@ -53,6 +53,17 @@ const STATUS_OPTIONS: { value: MissionStatus; label: string; activeClass: string
   { value: 'archived', label: 'Arsip', activeClass: 'bg-gray-500 text-white shadow-sm shadow-gray-500/30 dark:shadow-gray-500/20' },
 ]
 
+const CATEGORY_OPTIONS: { value: MissionCategory; label: string; icon: string }[] = [
+  { value: 'general', label: 'Umum', icon: '📌' },
+  { value: 'career', label: 'Karir', icon: '💼' },
+  { value: 'finance', label: 'Keuangan', icon: '💰' },
+  { value: 'health', label: 'Kesehatan', icon: '❤️' },
+  { value: 'education', label: 'Pendidikan', icon: '📚' },
+  { value: 'personal', label: 'Pribadi', icon: '🧑' },
+  { value: 'creative', label: 'Kreatif', icon: '🎨' },
+  { value: 'social', label: 'Sosial', icon: '🤝' },
+]
+
 const missionSchema = z.object({
   title: z.string().min(1, 'Nama mission wajib diisi'),
   description: z.string().optional(),
@@ -62,6 +73,8 @@ const missionSchema = z.object({
   target_date: z.string().optional(),
   icon: z.string().optional(),
   color: z.string().optional(),
+  notes: z.string().optional(),
+  category: z.enum(['general', 'career', 'finance', 'health', 'education', 'personal', 'creative', 'social'] as const).optional(),
 })
 
 type MissionFormValues = z.infer<typeof missionSchema>
@@ -86,6 +99,7 @@ export function MissionFormDialog({ open, onOpenChange, mission }: MissionFormDi
     defaultValues: {
       title: '', description: '', priority: 'medium', status: 'active',
       start_date: '', target_date: '', icon: 'Target', color: 'blue',
+      notes: '', category: 'general',
     },
   })
 
@@ -93,6 +107,7 @@ export function MissionFormDialog({ open, onOpenChange, mission }: MissionFormDi
   const selectedColor = watch('color')
   const selectedPriority = watch('priority')
   const selectedStatus = watch('status')
+  const selectedCategory = watch('category')
   const isSubmitting = createMission.isPending || updateMission.isPending
 
   useEffect(() => {
@@ -103,11 +118,13 @@ export function MissionFormDialog({ open, onOpenChange, mission }: MissionFormDi
           priority: mission.priority, status: mission.status,
           start_date: mission.start_date ?? '', target_date: mission.target_date ?? '',
           icon: mission.icon ?? 'Target', color: mission.color ?? 'blue',
+          notes: mission.notes ?? '', category: mission.category ?? 'general',
         })
       } else {
         reset({
           title: '', description: '', priority: 'medium', status: 'active',
           start_date: '', target_date: '', icon: 'Target', color: 'blue',
+          notes: '', category: 'general',
         })
       }
     }
@@ -244,6 +261,29 @@ export function MissionFormDialog({ open, onOpenChange, mission }: MissionFormDi
                   </button>
                 ))}
               </div>
+            </div>
+
+            {/* Category */}
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-[var(--c-text)]">Kategori</label>
+              <div className="grid grid-cols-4 gap-2">
+                {CATEGORY_OPTIONS.map((opt) => (
+                  <button key={opt.value} type="button" onClick={() => setValue('category', opt.value)}
+                    className={cn('py-2 text-[11px] font-semibold rounded-xl border-2 transition-all duration-200 flex items-center gap-1.5 justify-center',
+                      selectedCategory === opt.value
+                        ? 'border-[var(--c-accent)] bg-[var(--c-accent)]/10 dark:bg-[var(--c-accent)]/15 text-[var(--c-accent)] shadow-sm shadow-[var(--c-accent)]/10 scale-[1.02]'
+                        : 'border-[var(--c-border)] dark:border-white/10 text-[var(--c-text-muted)] hover:border-[var(--c-text-muted)] dark:hover:border-white/20 dark:hover:bg-white/5')}>
+                    <span className="text-xs">{opt.icon}</span>
+                    <span className="hidden sm:inline">{opt.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Notes */}
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-[var(--c-text)]">Catatan</label>
+              <textarea placeholder="Strategi, link penting, catatan personal..." rows={3} className={cn('min-h-[80px] resize-none', inputBase)} style={inputStyle} {...register('notes')} />
             </div>
 
             {/* Color Picker */}

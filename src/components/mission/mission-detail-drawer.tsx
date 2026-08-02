@@ -11,7 +11,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { useDeleteMission, useUpdateMission } from '@/lib/queries/mission-queries'
 import { MilestonePanel } from './milestone-panel'
-import { formatMissionDate, formatDaysRemaining, getPriorityConfig, getStatusConfig } from '@/lib/services/mission.service'
+import { formatMissionDate, formatDaysRemaining, getPriorityConfig, getStatusConfig, calculateMissionHealth, getCategoryConfig } from '@/lib/services/mission.service'
 import type { MissionRow } from '@/lib/types/mission'
 
 const ICON_MAP: Record<string, React.ElementType> = {
@@ -65,6 +65,8 @@ export function MissionDetailDrawer({ mission, open, onOpenChange, onEdit }: Mis
   const progressGlow = PROGRESS_GLOW_MAP[m.color ?? 'blue'] ?? PROGRESS_GLOW_MAP.blue
   const priority = getPriorityConfig(m.priority)
   const status = getStatusConfig(m.status)
+  const category = getCategoryConfig(m.category)
+  const health = calculateMissionHealth(m)
   const days = formatDaysRemaining(m.target_date)
   const isOverdue = m.target_date && new Date(m.target_date + 'T23:59:59') < new Date() && m.status === 'active'
   const progressVal = Math.min(Math.round(Number(m.progress)), 100)
@@ -127,6 +129,34 @@ export function MissionDetailDrawer({ mission, open, onOpenChange, onEdit }: Mis
             </div>
           </div>
 
+          {/* Health + Category row */}
+          <div className="flex items-center gap-2 flex-wrap">
+            {m.status === 'active' && (
+              <span className={cn('text-[10px] font-bold px-2 py-1 rounded-full dark:ring-1 dark:ring-white/5',
+                health.health === 'on_track' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                : health.health === 'at_risk' ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400'
+                : health.health === 'critical' ? 'bg-orange-500/10 text-orange-600 dark:text-orange-400'
+                : health.health === 'overdue' ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400'
+                : 'bg-[var(--c-surface)] text-[var(--c-text-muted)]'
+              )}>
+                <span className={cn('inline-block rounded-full mr-1',
+                  health.health === 'on_track' ? 'bg-emerald-500'
+                  : health.health === 'at_risk' ? 'bg-amber-500'
+                  : health.health === 'critical' ? 'bg-orange-500'
+                  : health.health === 'overdue' ? 'bg-rose-500'
+                  : 'bg-[var(--c-text-muted)]',
+                  'h-1.5 w-1.5')} />
+                {health.label}
+                {health.daysRemaining !== null && (
+                  <span className="ml-1 opacity-70">({health.daysRemaining >= 0 ? `${health.daysRemaining}h` : `${Math.abs(health.daysRemaining)}h lalu`})</span>
+                )}
+              </span>
+            )}
+            {m.category && m.category !== 'general' && (
+              <span className={cn('text-[10px] font-bold px-2 py-1 rounded-full dark:ring-1 dark:ring-white/5', category.bg, category.color)}>{category.label}</span>
+            )}
+          </div>
+
           {/* Progress bar with glow */}
           <div className="space-y-2">
             <div className="flex items-center justify-between text-xs">
@@ -162,6 +192,19 @@ export function MissionDetailDrawer({ mission, open, onOpenChange, onEdit }: Mis
               )}
             </div>
           </div>
+
+          {/* Notes */}
+          {m.notes && (
+            <div>
+              <h3 className="text-sm font-bold text-[var(--c-text)] mb-2 flex items-center gap-2">
+                <span className="h-1 w-4 rounded-full bg-violet-500" />
+                Catatan
+              </h3>
+              <div className="rounded-xl bg-[var(--c-surface)] dark:bg-white/[0.04] border border-[var(--c-border)] dark:border-white/[0.08] p-3.5 text-sm text-[var(--c-text)] whitespace-pre-wrap leading-relaxed dark:shadow-[0_2px_8px_rgba(0,0,0,0.2)]">
+                {m.notes}
+              </div>
+            </div>
+          )}
 
           {/* Milestones */}
           <div>

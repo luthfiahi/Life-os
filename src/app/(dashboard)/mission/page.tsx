@@ -2,13 +2,14 @@
 
 import { useState, useMemo } from 'react'
 import {
-  Target, Plus, Filter, CalendarDays, Pin, TrendingUp, CheckCircle2, Rocket, Sparkles,
+  Target, Plus, CalendarDays, Pin, TrendingUp, CheckCircle2, Rocket, Sparkles, LayoutDashboard,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useMissions, useDeleteMission, useUpdateMission } from '@/lib/queries/mission-queries'
 import { MissionCard } from '@/components/mission/mission-card'
 import { MissionFormDialog } from '@/components/mission/mission-form-dialog'
 import { MissionDetailDrawer } from '@/components/mission/mission-detail-drawer'
+import { MissionDashboardView } from '@/components/mission/mission-dashboard-view'
 import type { MissionRow } from '@/lib/types/mission'
 
 // ─── Skeletons ───────────────────────────────────────────
@@ -62,9 +63,12 @@ const STATUS_TABS = [
 
 type TabValue = typeof STATUS_TABS[number]['value']
 
+type ViewMode = 'missions' | 'dashboard'
+
 // ─── Main Page ───────────────────────────────────────────
 export default function MissionPage() {
   const [activeTab, setActiveTab] = useState<TabValue>('all')
+  const [viewMode, setViewMode] = useState<ViewMode>('missions')
   const [formOpen, setFormOpen] = useState(false)
   const [editingMission, setEditingMission] = useState<MissionRow | null>(null)
   const [detailMission, setDetailMission] = useState<MissionRow | null>(null)
@@ -119,6 +123,12 @@ export default function MissionPage() {
     setDrawerOpen(true)
   }
 
+  function handleDashboardMissionClick(mission: MissionRow) {
+    setViewMode('missions')
+    setActiveTab('all')
+    handleCardClick(mission)
+  }
+
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Page Header */}
@@ -142,26 +152,54 @@ export default function MissionPage() {
         <StatCard label="Avg Progress" value={`${stats.progress}%`} icon={TrendingUp} color="bg-gradient-to-br from-orange-500 to-orange-600" />
       </div>
 
-      {/* Status Tabs — Premium glass style */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 -mx-1 px-1">
-        {STATUS_TABS.map((tab) => (
-          <button key={tab.value} type="button" onClick={() => setActiveTab(tab.value)}
+      {/* View Mode Toggle + Status Tabs */}
+      <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1 p-1 rounded-xl bg-[var(--c-surface)] dark:bg-white/[0.04] border border-[var(--c-border)] dark:border-white/[0.08]">
+          <button type="button" onClick={() => setViewMode('missions')}
             className={cn(
-              'px-4 py-2 text-xs font-semibold rounded-xl whitespace-nowrap transition-all duration-200',
-              activeTab === tab.value
-                ? 'bg-[var(--c-accent)] text-white shadow-md shadow-[var(--c-accent)]/25 dark:shadow-[var(--c-accent)]/15'
-                : 'text-[var(--c-text-muted)] hover:text-[var(--c-text)] hover:bg-[var(--c-surface)] dark:hover:bg-white/[0.05] border border-transparent hover:border-[var(--c-border)] dark:hover:border-white/10',
+              'px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 flex items-center gap-1.5',
+              viewMode === 'missions'
+                ? 'bg-[var(--c-accent)] text-white shadow-sm shadow-[var(--c-accent)]/25'
+                : 'text-[var(--c-text-muted)] hover:text-[var(--c-text)]',
             )}>
-            {tab.label}
-            {tab.value !== 'all' && allMissions && (
-              <span className="ml-1.5 opacity-60 tabular-nums">{allMissions.filter((m) => m.status === tab.value).length}</span>
-            )}
+            <Target className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Misi</span>
           </button>
-        ))}
+          <button type="button" onClick={() => setViewMode('dashboard')}
+            className={cn(
+              'px-3 py-1.5 text-xs font-semibold rounded-lg transition-all duration-200 flex items-center gap-1.5',
+              viewMode === 'dashboard'
+                ? 'bg-[var(--c-accent)] text-white shadow-sm shadow-[var(--c-accent)]/25'
+                : 'text-[var(--c-text-muted)] hover:text-[var(--c-text)]',
+            )}>
+            <LayoutDashboard className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Dashboard</span>
+          </button>
+        </div>
+        {viewMode === 'missions' && (
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 -mx-1 px-1">
+            {STATUS_TABS.map((tab) => (
+              <button key={tab.value} type="button" onClick={() => setActiveTab(tab.value)}
+                className={cn(
+                  'px-4 py-2 text-xs font-semibold rounded-xl whitespace-nowrap transition-all duration-200',
+                  activeTab === tab.value
+                    ? 'bg-[var(--c-accent)] text-white shadow-md shadow-[var(--c-accent)]/25 dark:shadow-[var(--c-accent)]/15'
+                    : 'text-[var(--c-text-muted)] hover:text-[var(--c-text)] hover:bg-[var(--c-surface)] dark:hover:bg-white/[0.05] border border-transparent hover:border-[var(--c-border)] dark:hover:border-white/10',
+                )}>
+                {tab.label}
+                {tab.value !== 'all' && allMissions && (
+                  <span className="ml-1.5 opacity-60 tabular-nums">{allMissions.filter((m) => m.status === tab.value).length}</span>
+                )}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Mission Grid */}
-      {isLoading ? (
+
+      {viewMode === 'dashboard' ? (
+        <MissionDashboardView onMissionClick={handleDashboardMissionClick} />
+      ) : isLoading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {Array.from({ length: 6 }).map((_, i) => <CardSkeleton key={i} />)}
         </div>
@@ -190,6 +228,7 @@ export default function MissionPage() {
             <MissionCard
               key={mission.id}
               mission={mission}
+              data-mission-id={mission.id}
               onClick={() => handleCardClick(mission)}
               onEdit={() => handleEdit(mission)}
               onArchive={() => handleArchive(mission)}

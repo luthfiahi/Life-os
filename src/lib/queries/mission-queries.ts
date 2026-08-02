@@ -5,12 +5,12 @@ import {
 } from '@tanstack/react-query'
 import { useAuth } from '@/hooks/use-auth'
 import { missionRepo, milestoneRepo } from '@/lib/repositories/mission.repository'
-import { getMissionSnapshot, recalcMissionProgress } from '@/lib/services/mission.service'
+import { getMissionSnapshot, recalcMissionProgress, getMissionDashboard } from '@/lib/services/mission.service'
 import { missionKeys, invalidateMissionQueries } from './query-keys'
 import type {
   MissionInsert, MissionUpdate,
   MilestoneInsert, MilestoneUpdate,
-  MissionSnapshotData,
+  MissionSnapshotData, MissionDashboardData,
 } from '@/lib/types/mission'
 
 // ─── Dashboard: Mission Snapshot ──────────────────────────
@@ -30,6 +30,25 @@ export function useMissionSnapshot() {
     enabled: !!userId,
     staleTime: 2 * 60 * 1000,
     placeholderData: (previousData) => previousData,
+  })
+}
+
+// ─── Mission Dashboard (Sprint 6B) ───────────────────────
+
+export function useMissionDashboard() {
+  const { user } = useAuth()
+  const userId = user?.id
+
+  return useQuery<MissionDashboardData>({
+    queryKey: userId ? missionKeys.dashboard(userId) : ['mission', 'dashboard', 'anonymous'],
+    queryFn: async () => {
+      if (!userId) {
+        return { healthSummary: { on_track: 0, at_risk: 0, critical: 0, overdue: 0, no_deadline: 0 }, upcomingMilestones: [], progressByMission: [], priorityMatrix: [{ quadrant: 'Do First', missions: [] }, { quadrant: 'Schedule', missions: [] }, { quadrant: 'Delegate', missions: [] }, { quadrant: 'Eliminate', missions: [] }] }
+      }
+      return getMissionDashboard(userId)
+    },
+    enabled: !!userId,
+    staleTime: 2 * 60 * 1000,
   })
 }
 
