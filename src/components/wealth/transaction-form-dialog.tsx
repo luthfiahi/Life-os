@@ -357,8 +357,8 @@ export function TransactionFormDialog({ open, onOpenChange, transaction, default
                       inputMode="numeric"
                       placeholder="0"
                       className={cn(
-                        'h-16 pl-12 pr-4 text-2xl font-bold tabular-nums',
                         inputBase,
+                        'h-16 !pl-12 pr-4 !text-2xl font-bold tabular-nums',
                         errors.amount && inputError,
                       )}
                       style={inputStyle}

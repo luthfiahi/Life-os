@@ -147,8 +147,8 @@ export function BudgetFormDialog({ open, onOpenChange, budget }: BudgetFormDialo
                   inputMode="numeric"
                   placeholder="0"
                   className={cn(
-                    'h-14 pl-12 pr-4 text-2xl font-bold tabular-nums',
                     inputBase,
+                    'h-14 !pl-12 pr-4 !text-2xl font-bold tabular-nums',
                     errors.amount && inputError,
                   )}
                   style={inputStyle}

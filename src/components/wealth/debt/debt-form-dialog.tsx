@@ -206,11 +206,12 @@ export function DebtFormDialog({ open, onOpenChange, editDebt }: DebtFormDialogP
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-lg font-bold text-[var(--c-text-muted)] select-none pointer-events-none">Rp</span>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
                   placeholder="0"
                   className={cn(
-                    'h-14 pl-12 pr-4 text-2xl font-bold tabular-nums',
                     inputBase,
+                    'h-14 !pl-12 pr-4 !text-2xl font-bold tabular-nums',
                     errors.total_amount && inputError,
                   )}
                   style={inputStyle}
@@ -234,8 +235,8 @@ export function DebtFormDialog({ open, onOpenChange, editDebt }: DebtFormDialogP
                   Bunga (%/tahun)
                 </label>
                 <input
-                  type="number"
-                  step="0.01"
+                  type="text"
+                  inputMode="decimal"
                   placeholder="0"
                   className={cn('h-12', inputBase)}
                   style={inputStyle}
@@ -250,7 +251,8 @@ export function DebtFormDialog({ open, onOpenChange, editDebt }: DebtFormDialogP
                   Tenor (bulan)
                 </label>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
                   placeholder="12"
                   className={cn('h-12', inputBase, errors.tenure_months && inputError)}
                   style={inputStyle}
@@ -274,7 +276,8 @@ export function DebtFormDialog({ open, onOpenChange, editDebt }: DebtFormDialogP
                   Sisa Saldo (Rp)
                 </label>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
                   placeholder="= jumlah pinjaman"
                   className={cn('h-12', inputBase)}
                   style={inputStyle}
@@ -289,9 +292,8 @@ export function DebtFormDialog({ open, onOpenChange, editDebt }: DebtFormDialogP
                   Tgl Jatuh Tempo
                 </label>
                 <input
-                  type="number"
-                  min={1}
-                  max={28}
+                  type="text"
+                  inputMode="numeric"
                   placeholder="1-28"
                   className={cn('h-12', inputBase)}
                   style={inputStyle}

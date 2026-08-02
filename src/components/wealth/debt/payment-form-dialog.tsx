@@ -180,8 +180,8 @@ export function PaymentFormDialog({ open, onOpenChange, debt }: PaymentFormDialo
                   inputMode="numeric"
                   placeholder={String(debt ? debt.monthly_payment : '')}
                   className={cn(
-                    'h-14 pl-12 pr-4 text-2xl font-bold tabular-nums',
                     inputBase,
+                    'h-14 !pl-12 pr-4 !text-2xl font-bold tabular-nums',
                     errors.amount && inputError,
                   )}
                   style={inputStyle}
