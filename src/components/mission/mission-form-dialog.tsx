@@ -9,7 +9,7 @@ import {
   PenLine, CalendarDays, AlertCircle, Save,
 } from 'lucide-react'
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
+  Dialog, DialogContent, DialogTitle, DialogDescription,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -128,8 +128,8 @@ export function MissionFormDialog({ open, onOpenChange, mission }: MissionFormDi
   }
 
   const inputBase = cn(
-    'flex w-full rounded-xl border border-[var(--c-border)] bg-white px-4 text-sm shadow-sm',
-    'transition-all duration-200 dark:bg-[#2e333b]',
+    'flex w-full rounded-xl border border-[var(--c-border)] bg-[var(--c-card)] px-4 text-sm shadow-sm',
+    'transition-all duration-200',
     'placeholder:text-[var(--c-text-muted)]',
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--c-accent)]/30 focus-visible:border-[var(--c-accent)]',
   )
@@ -141,14 +141,14 @@ export function MissionFormDialog({ open, onOpenChange, mission }: MissionFormDi
       <DialogContent className="flex flex-col gap-0 overflow-hidden p-0 sm:max-w-[560px] max-h-[97dvh] sm:max-h-[92vh]">
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-1 min-h-0">
           {/* Header */}
-          <div className="flex-shrink-0 px-6 pt-6 pb-4">
+          <div className="flex-shrink-0 px-6 pt-6 pb-5 border-b border-[var(--c-border)]">
             <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center shadow-lg transition-all duration-300 flex-shrink-0">
+              <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center shadow-lg shadow-blue-500/20 transition-all duration-300 flex-shrink-0">
                 <Target className="h-6 w-6 text-white" />
               </div>
               <div className="min-w-0">
-                <DialogTitle className="text-xl font-bold tracking-tight">
-                  {isEditing ? 'Edit Mission' : 'Tambah Mission Baru'}
+                <DialogTitle className="text-xl font-extrabold tracking-tight">
+                  {isEditing ? 'Edit Mission' : 'Mission Baru'}
                 </DialogTitle>
                 <DialogDescription className="text-sm mt-0.5">
                   {isEditing ? 'Ubah detail mission kamu.' : 'Tetapkan tujuan besar yang ingin dicapai.'}
@@ -159,7 +159,6 @@ export function MissionFormDialog({ open, onOpenChange, mission }: MissionFormDi
 
           {/* Scrollable Content */}
           <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-6 pb-6 space-y-5">
-
             {/* Title */}
             <div className="space-y-2">
               <label className="flex items-center gap-2 text-sm font-semibold text-[var(--c-text)]">
@@ -246,7 +245,7 @@ export function MissionFormDialog({ open, onOpenChange, mission }: MissionFormDi
               <div className="flex flex-wrap gap-2.5">
                 {COLOR_PRESETS.map((c) => (
                   <button key={c.value} type="button" onClick={() => setValue('color', c.value)}
-                    className={cn('h-8 w-8 rounded-full transition-all duration-200 ring-2 ring-offset-2 ring-offset-white dark:ring-offset-[#1a1d22]',
+                    className={cn('h-8 w-8 rounded-full transition-all duration-200 ring-2 ring-offset-2 ring-offset-[var(--c-card)]',
                       c.bg,
                       selectedColor === c.value ? 'ring-[var(--c-accent)] scale-110' : 'ring-transparent')} />
                 ))}

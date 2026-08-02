@@ -3,7 +3,7 @@
 import { cn } from '@/lib/utils'
 import {
   Target, Rocket, Flag, Star, Trophy, Zap, Code, BookOpen, Dumbbell, Heart,
-  CalendarDays, Pin, MoreVertical, Pencil, Archive, Trash2, CheckCircle2,
+  CalendarDays, Pin, Pencil, Archive, Trash2, CheckCircle2, Flame,
 } from 'lucide-react'
 import { formatDaysRemaining, getPriorityConfig, getStatusConfig } from '@/lib/services/mission.service'
 import type { MissionRow } from '@/lib/types/mission'
@@ -21,6 +21,15 @@ const GRADIENT_MAP: Record<string, string> = {
   sky: 'from-sky-500 to-sky-600',
 }
 
+const GRADIENT_BG: Record<string, string> = {
+  blue: 'from-blue-500/8 to-blue-600/3',
+  emerald: 'from-emerald-500/8 to-emerald-600/3',
+  violet: 'from-violet-500/8 to-violet-600/3',
+  orange: 'from-orange-500/8 to-orange-600/3',
+  rose: 'from-rose-500/8 to-rose-600/3',
+  sky: 'from-sky-500/8 to-sky-600/3',
+}
+
 interface MissionCardProps {
   mission: MissionRow
   milestoneCount?: { total: number; completed: number }
@@ -33,43 +42,49 @@ interface MissionCardProps {
 export function MissionCard({ mission, milestoneCount, onClick, onEdit, onArchive, onDelete }: MissionCardProps) {
   const Icon = ICON_MAP[mission.icon ?? 'Target'] ?? Target
   const gradient = GRADIENT_MAP[mission.color ?? 'blue'] ?? GRADIENT_MAP.blue
+  const gradientBg = GRADIENT_BG[mission.color ?? 'blue'] ?? GRADIENT_BG.blue
   const priority = getPriorityConfig(mission.priority)
   const status = getStatusConfig(mission.status)
   const days = formatDaysRemaining(mission.target_date)
   const isOverdue = mission.target_date && new Date(mission.target_date + 'T23:59:59') < new Date() && mission.status === 'active'
+  const progressVal = Math.min(Math.round(Number(mission.progress)), 100)
 
   return (
     <div
       className={cn(
-        'group relative rounded-2xl border border-[var(--c-border)] bg-white dark:bg-[#22262c] shadow-sm hover:shadow-[var(--shadow-card)] transition-all duration-200 overflow-hidden',
-        mission.status === 'completed' && 'opacity-70',
-        mission.status === 'archived' && 'opacity-50',
+        'group relative rounded-2xl border border-[var(--c-border)] bg-[var(--c-card)] transition-all duration-300 overflow-hidden',
+        'hover:shadow-[var(--shadow-elevated)] hover:border-[var(--c-accent)]/30 hover:-translate-y-0.5',
+        mission.status === 'completed' && 'opacity-60',
+        mission.status === 'archived' && 'opacity-40',
       )}
     >
-      {/* Color accent bar */}
-      <div className={cn('h-1 w-full bg-gradient-to-r', gradient)} />
+      {/* Subtle gradient background tint */}
+      <div className={cn('absolute inset-0 bg-gradient-to-br opacity-50 pointer-events-none', gradientBg)} />
 
-      <div className="p-4 space-y-3">
-        {/* Top: Icon + Title + Menu */}
+      {/* Color accent bar */}
+      <div className={cn('h-[3px] w-full bg-gradient-to-r relative z-10', gradient)} />
+
+      <div className="relative z-10 p-4 space-y-3.5">
+        {/* Top: Icon + Title + Actions */}
         <div className="flex items-start gap-3">
-          <div className={cn('h-10 w-10 rounded-xl bg-gradient-to-br flex items-center justify-center shadow-sm shrink-0', gradient)}>
-            <Icon className="h-5 w-5 text-white" />
+          <div className={cn('h-11 w-11 rounded-xl bg-gradient-to-br flex items-center justify-center shadow-md shrink-0', gradient)}>
+            <Icon className="h-5 w-5 text-white drop-shadow-sm" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              {mission.is_pinned && <Pin className="h-3.5 w-3.5 text-[var(--c-accent)] fill-[var(--c-accent)] shrink-0" />}
+              {mission.is_pinned && <Pin className="h-3 w-3 text-[var(--c-accent)] fill-[var(--c-accent)] shrink-0" />}
               <h3 className={cn(
-                'text-sm font-bold truncate text-[var(--c-text)]',
-                mission.status === 'completed' && 'line-through',
+                'text-[13px] font-bold truncate text-[var(--c-text)]',
+                mission.status === 'completed' && 'line-through opacity-70',
               )}>
                 {mission.title}
               </h3>
             </div>
             {mission.description && (
-              <p className="text-xs text-[var(--c-text-muted)] line-clamp-2 mt-0.5">{mission.description}</p>
+              <p className="text-[11px] text-[var(--c-text-muted)] line-clamp-2 mt-1 leading-relaxed">{mission.description}</p>
             )}
           </div>
-          {/* Action menu */}
+          {/* Action buttons */}
           <div className="flex items-center gap-0.5 shrink-0">
             <button type="button" onClick={(e) => { e.stopPropagation(); onEdit?.() }} className="h-8 w-8 flex items-center justify-center rounded-lg text-[var(--c-text-muted)] hover:text-[var(--c-text)] hover:bg-[var(--c-surface)] transition-all opacity-0 group-hover:opacity-100">
               <Pencil className="h-3.5 w-3.5" />
@@ -86,13 +101,13 @@ export function MissionCard({ mission, milestoneCount, onClick, onEdit, onArchiv
         {/* Progress bar */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between text-[11px]">
-            <span className="text-[var(--c-text-muted)]">Progress</span>
-            <span className="font-bold text-[var(--c-text)] tabular-nums">{Math.round(Number(mission.progress))}%</span>
+            <span className="text-[var(--c-text-muted)] font-medium">Progress</span>
+            <span className="font-extrabold text-[var(--c-text)] tabular-nums tracking-tight">{progressVal}%</span>
           </div>
-          <div className="h-2 rounded-full bg-[var(--c-border)]/30 overflow-hidden">
+          <div className="h-2 rounded-full bg-[var(--c-border)]/40 overflow-hidden">
             <div
-              className={cn('h-full rounded-full bg-gradient-to-r transition-all duration-500', gradient)}
-              style={{ width: `${Math.min(Number(mission.progress), 100)}%` }}
+              className={cn('h-full rounded-full bg-gradient-to-r transition-all duration-700 ease-out', gradient)}
+              style={{ width: `${progressVal}%` }}
             />
           </div>
         </div>
@@ -112,12 +127,13 @@ export function MissionCard({ mission, milestoneCount, onClick, onEdit, onArchiv
             {milestoneCount && (
               <span className="flex items-center gap-1">
                 <CheckCircle2 className="h-3 w-3" />
-                {milestoneCount.completed}/{milestoneCount.total}
+                <span className="tabular-nums">{milestoneCount.completed}/{milestoneCount.total}</span>
               </span>
             )}
+            {isOverdue && <Flame className="h-3 w-3 text-rose-500" />}
             {days && (
-              <span className={cn('flex items-center gap-1', isOverdue && 'text-rose-500 font-semibold')}>
-                <CalendarDays className="h-3 w-3" />
+              <span className={cn('flex items-center gap-1 tabular-nums', isOverdue && 'text-rose-500 font-bold')}>
+                {!isOverdue && <CalendarDays className="h-3 w-3" />}
                 {days}
               </span>
             )}
@@ -127,7 +143,7 @@ export function MissionCard({ mission, milestoneCount, onClick, onEdit, onArchiv
 
       {/* Click overlay */}
       {onClick && (
-        <button type="button" onClick={onClick} className="absolute inset-0 w-full h-full cursor-pointer" style={{ background: 'transparent' }} />
+        <button type="button" onClick={onClick} className="absolute inset-0 w-full h-full cursor-pointer z-20" style={{ background: 'transparent' }} />
       )}
     </div>
   )

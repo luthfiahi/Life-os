@@ -123,7 +123,7 @@ export function MilestonePanel({ missionId }: MilestonePanelProps) {
                 onKeyDown={(e) => { if (e.key === 'Enter') handleEditSave(ms.id); if (e.key === 'Escape') setEditingId(null) }}
                 onBlur={() => handleEditSave(ms.id)}
                 autoFocus
-                className="flex-1 h-8 rounded-lg border border-[var(--c-border)] bg-white dark:bg-[#2e333b] px-2 text-sm outline-none focus:ring-2 focus:ring-[var(--c-accent)]/30"
+                className="flex-1 h-8 rounded-lg border border-[var(--c-border)] bg-[var(--c-card)] px-2 text-sm outline-none focus:ring-2 focus:ring-[var(--c-accent)]/30"
                 style={{ color: 'var(--c-text)' }}
               />
             ) : (
@@ -168,7 +168,7 @@ export function MilestonePanel({ missionId }: MilestonePanelProps) {
             onChange={(e) => setNewTitle(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter') handleAdd(); if (e.key === 'Escape') setIsAdding(false) }}
             autoFocus
-            className="flex-1 h-10 rounded-xl border border-[var(--c-border)] bg-white dark:bg-[#2e333b] px-3 text-sm outline-none focus:ring-2 focus:ring-[var(--c-accent)]/30"
+            className="flex-1 h-10 rounded-xl border border-[var(--c-border)] bg-[var(--c-card)] px-3 text-sm outline-none focus:ring-2 focus:ring-[var(--c-accent)]/30"
             style={{ color: 'var(--c-text)' }}
           />
           <Button type="button" size="sm" variant="primary" onClick={handleAdd} loading={createMilestone.isPending} className="rounded-xl h-10 px-4">
