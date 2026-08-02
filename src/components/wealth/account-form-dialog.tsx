@@ -216,9 +216,10 @@ export function AccountFormDialog({ open, onOpenChange, account }: AccountFormDi
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-[var(--c-text-muted)] select-none pointer-events-none">Rp</span>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
                   placeholder="0"
-                  className={cn('h-12 pl-10 pr-4 text-lg font-bold tabular-nums', inputBase, errors.balance && inputError)}
+                  className={cn(inputBase, 'h-12 !pl-10 pr-4 !text-lg font-bold tabular-nums', errors.balance && inputError)}
                   style={inputStyle}
                   {...register('balance')}
                 />
