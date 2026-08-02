@@ -95,6 +95,7 @@
    Dark Mode Tokens
    ============================================================ */
 .dark {
+  color-scheme: dark;
   --c-bg: var(--color-lo-dark-bg);
   --c-surface: var(--color-lo-dark-surface);
   --c-card: var(--color-lo-dark-card);

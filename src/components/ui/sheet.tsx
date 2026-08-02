@@ -86,8 +86,8 @@ function SheetContent({
         {...props}
       >
         {children}
-        <SheetPrimitive.Close className="ring-offset-background focus:ring-ring data-[state=open]:bg-secondary absolute top-4 right-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none">
-          <XIcon className="size-4" />
+        <SheetPrimitive.Close className="absolute top-4 right-4 h-7 w-7 rounded-lg flex items-center justify-center text-[var(--c-text-muted)] opacity-70 transition-opacity hover:opacity-100 hover:bg-black/5 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none">
+          <XIcon className="h-4 w-4" />
           <span className="sr-only">Close</span>
         </SheetPrimitive.Close>
       </SheetPrimitive.Content>
@@ -122,7 +122,7 @@ function SheetTitle({
   return (
     <SheetPrimitive.Title
       data-slot="sheet-title"
-      className={cn("text-foreground font-semibold", className)}
+      className={cn("text-[var(--c-text)] font-semibold", className)}
       {...props}
     />
   )
@@ -135,7 +135,7 @@ function SheetDescription({
   return (
     <SheetPrimitive.Description
       data-slot="sheet-description"
-      className={cn("text-muted-foreground text-sm", className)}
+      className={cn("text-sm text-[var(--c-text-muted)]", className)}
       {...props}
     />
   )
