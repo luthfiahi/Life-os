@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import {
-  Target, Plus, Filter, CalendarDays, Pin, TrendingUp, CheckCircle2,
+  Target, Plus, Filter, CalendarDays, Pin, TrendingUp, CheckCircle2, Rocket, Sparkles,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useMissions, useDeleteMission, useUpdateMission } from '@/lib/queries/mission-queries'
@@ -14,38 +14,39 @@ import type { MissionRow } from '@/lib/types/mission'
 // ─── Skeletons ───────────────────────────────────────────
 function CardSkeleton() {
   return (
-    <div className="rounded-2xl border border-[var(--c-border)] bg-[var(--c-card)] p-4 space-y-3.5 animate-pulse">
-      <div className="h-[3px] w-full rounded-full bg-[var(--c-border)]/40" />
+    <div className="rounded-2xl border border-[var(--c-border)] dark:border-white/[0.08] bg-[var(--c-card)] p-4 space-y-3.5 animate-pulse">
+      <div className="h-[3px] w-full rounded-full bg-[var(--c-border)]/40 dark:bg-white/5" />
       <div className="flex items-center gap-3">
-        <div className="h-11 w-11 rounded-xl bg-[var(--c-surface)]" />
+        <div className="h-11 w-11 rounded-xl bg-[var(--c-surface)] dark:bg-white/[0.04]" />
         <div className="flex-1 space-y-2">
-          <div className="h-4 w-3/4 rounded-lg bg-[var(--c-surface)]" />
-          <div className="h-3 w-1/2 rounded-lg bg-[var(--c-surface)]" />
+          <div className="h-4 w-3/4 rounded-lg bg-[var(--c-surface)] dark:bg-white/[0.04]" />
+          <div className="h-3 w-1/2 rounded-lg bg-[var(--c-surface)] dark:bg-white/[0.04]" />
         </div>
       </div>
-      <div className="h-2 w-full rounded-full bg-[var(--c-surface)]" />
+      <div className="h-2 w-full rounded-full bg-[var(--c-surface)] dark:bg-white/[0.04]" />
       <div className="flex gap-2">
-        <div className="h-5 w-12 rounded-full bg-[var(--c-surface)]" />
-        <div className="h-5 w-14 rounded-full bg-[var(--c-surface)]" />
+        <div className="h-5 w-12 rounded-full bg-[var(--c-surface)] dark:bg-white/[0.04]" />
+        <div className="h-5 w-14 rounded-full bg-[var(--c-surface)] dark:bg-white/[0.04]" />
       </div>
     </div>
   )
 }
 
-// ─── Summary Card ───────────────────────────────────────
+// ─── Stat Card (Premium) ─────────────────────────────────
 function StatCard({ label, value, icon: Icon, color, sub }: { label: string; value: string | number; icon: React.ElementType; color: string; sub?: string }) {
   return (
-    <div className="rounded-2xl border border-[var(--c-border)] bg-[var(--c-card)] p-4 space-y-3 transition-all duration-200 hover:shadow-[var(--shadow-elevated)] hover:-translate-y-0.5">
-      <div className="flex items-center justify-between">
-        <div className={cn('h-10 w-10 rounded-xl flex items-center justify-center shadow-sm', color)}>
+    <div className="rounded-2xl border border-[var(--c-border)] dark:border-white/[0.08] bg-[var(--c-card)] p-4 space-y-3 transition-all duration-300 hover:shadow-[var(--shadow-elevated)] dark:hover:shadow-[0_8px_32px_rgba(0,0,0,0.3)] hover:-translate-y-0.5 relative overflow-hidden">
+      <div className={cn('absolute -top-6 -right-6 h-20 w-20 rounded-full blur-2xl opacity-30 dark:opacity-20 pointer-events-none', color)}></div>
+      <div className="flex items-center justify-between relative">
+        <div className={cn('h-10 w-10 rounded-xl flex items-center justify-center shadow-sm dark:shadow-[0_4px_16px_rgba(0,0,0,0.4)]', color)}>
           <Icon className="h-5 w-5 text-white" />
         </div>
         {sub && (
           <span className={cn('text-[10px] font-bold px-1.5 py-0.5 rounded-md', sub)}>{value}</span>
         )}
       </div>
-      {!sub && <p className="text-2xl font-extrabold text-[var(--c-text)] tabular-nums tracking-tight leading-none">{value}</p>}
-      <p className="text-[11px] text-[var(--c-text-muted)] font-medium">{label}</p>
+      {!sub && <p className="text-2xl font-extrabold text-[var(--c-text)] tabular-nums tracking-tight leading-none relative">{value}</p>}
+      <p className="text-[11px] text-[var(--c-text-muted)] font-medium relative">{label}</p>
     </div>
   )
 }
@@ -127,29 +128,29 @@ export default function MissionPage() {
           <p className="text-sm text-[var(--c-text-muted)] mt-0.5">Kelola tujuan besar dan milestone-mu.</p>
         </div>
         <button type="button" onClick={() => { setEditingMission(null); setFormOpen(true) }}
-          className="h-10 px-5 rounded-xl bg-[var(--c-accent)] text-white text-sm font-bold shadow-lg shadow-[var(--c-accent)]/25 hover:shadow-xl hover:shadow-[var(--c-accent)]/30 hover:brightness-110 active:scale-[0.97] transition-all flex items-center gap-2">
+          className="h-10 px-5 rounded-xl bg-[var(--c-accent)] text-white text-sm font-bold shadow-lg shadow-[var(--c-accent)]/25 dark:shadow-[var(--c-accent)]/15 hover:shadow-xl hover:shadow-[var(--c-accent)]/30 hover:brightness-110 active:scale-[0.97] transition-all flex items-center gap-2">
           <Plus className="h-4 w-4" />
           <span className="hidden sm:inline">Mission Baru</span>
         </button>
       </div>
 
-      {/* Summary Stats */}
+      {/* Summary Stats — Premium with glow accents */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <StatCard label="Total Mission" value={stats.total} icon={Target} color="bg-gradient-to-br from-blue-500 to-blue-600" />
-        <StatCard label="Aktif" value={stats.active} icon={Pin} color="bg-gradient-to-br from-emerald-500 to-emerald-600" />
+        <StatCard label="Aktif" value={stats.active} icon={Rocket} color="bg-gradient-to-br from-emerald-500 to-emerald-600" />
         <StatCard label="Selesai" value={stats.completed} icon={CheckCircle2} color="bg-gradient-to-br from-violet-500 to-violet-600" />
         <StatCard label="Avg Progress" value={`${stats.progress}%`} icon={TrendingUp} color="bg-gradient-to-br from-orange-500 to-orange-600" />
       </div>
 
-      {/* Status Tabs */}
+      {/* Status Tabs — Premium glass style */}
       <div className="flex items-center gap-1.5 overflow-x-auto pb-1 -mx-1 px-1">
         {STATUS_TABS.map((tab) => (
           <button key={tab.value} type="button" onClick={() => setActiveTab(tab.value)}
             className={cn(
               'px-4 py-2 text-xs font-semibold rounded-xl whitespace-nowrap transition-all duration-200',
               activeTab === tab.value
-                ? 'bg-[var(--c-accent)] text-white shadow-md shadow-[var(--c-accent)]/25'
-                : 'text-[var(--c-text-muted)] hover:text-[var(--c-text)] hover:bg-[var(--c-surface)] border border-transparent hover:border-[var(--c-border)]',
+                ? 'bg-[var(--c-accent)] text-white shadow-md shadow-[var(--c-accent)]/25 dark:shadow-[var(--c-accent)]/15'
+                : 'text-[var(--c-text-muted)] hover:text-[var(--c-text)] hover:bg-[var(--c-surface)] dark:hover:bg-white/[0.05] border border-transparent hover:border-[var(--c-border)] dark:hover:border-white/10',
             )}>
             {tab.label}
             {tab.value !== 'all' && allMissions && (
@@ -167,10 +168,10 @@ export default function MissionPage() {
       ) : filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 text-center">
           <div className="relative mb-5">
-            <div className="h-20 w-20 rounded-3xl bg-[var(--c-surface)] border border-[var(--c-border)] flex items-center justify-center">
-              <Target className="h-9 w-9 text-[var(--c-text-muted)]/40" />
+            <div className="h-20 w-20 rounded-3xl bg-[var(--c-surface)] dark:bg-white/[0.04] border border-[var(--c-border)] dark:border-white/[0.08] flex items-center justify-center dark:shadow-[0_4px_24px_rgba(0,0,0,0.3)]">
+              <Target className="h-9 w-9 text-[var(--c-text-muted)]/40 dark:text-white/15" />
             </div>
-            <div className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-[var(--c-accent)]/10 border border-[var(--c-accent)]/20 flex items-center justify-center">
+            <div className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-[var(--c-accent)]/10 dark:bg-[var(--c-accent)]/20 border border-[var(--c-accent)]/20 dark:border-[var(--c-accent)]/30 flex items-center justify-center">
               <Plus className="h-3 w-3 text-[var(--c-accent)]" />
             </div>
           </div>
@@ -179,8 +180,8 @@ export default function MissionPage() {
             Mulai dengan membuat mission pertamamu. Pecah menjadi milestone kecil yang bisa dicapai.
           </p>
           <button type="button" onClick={() => { setEditingMission(null); setFormOpen(true) }}
-            className="mt-5 h-11 px-6 rounded-xl bg-[var(--c-accent)] text-white text-sm font-bold shadow-lg shadow-[var(--c-accent)]/25 hover:shadow-xl hover:brightness-110 active:scale-[0.97] transition-all flex items-center gap-2">
-            <Plus className="h-4 w-4" /> Buat Mission Pertama
+            className="mt-5 h-11 px-6 rounded-xl bg-[var(--c-accent)] text-white text-sm font-bold shadow-lg shadow-[var(--c-accent)]/25 dark:shadow-[var(--c-accent)]/15 hover:shadow-xl hover:brightness-110 active:scale-[0.97] transition-all flex items-center gap-2">
+            <Sparkles className="h-4 w-4" /> Buat Mission Pertama
           </button>
         </div>
       ) : (

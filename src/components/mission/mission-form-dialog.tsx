@@ -6,7 +6,7 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Target, Rocket, Flag, Star, Trophy, Zap, Code, BookOpen, Dumbbell, Heart,
-  PenLine, CalendarDays, AlertCircle, Save,
+  PenLine, CalendarDays, AlertCircle, Save, Sparkles,
 } from 'lucide-react'
 import {
   Dialog, DialogContent, DialogTitle, DialogDescription,
@@ -31,26 +31,26 @@ const ICON_PRESETS = [
 ] as const
 
 const COLOR_PRESETS = [
-  { value: 'blue', bg: 'bg-blue-500' },
-  { value: 'emerald', bg: 'bg-emerald-500' },
-  { value: 'violet', bg: 'bg-violet-500' },
-  { value: 'orange', bg: 'bg-orange-500' },
-  { value: 'rose', bg: 'bg-rose-500' },
-  { value: 'sky', bg: 'bg-sky-500' },
+  { value: 'blue', bg: 'bg-blue-500', ring: 'ring-blue-400/50 dark:ring-blue-400/30' },
+  { value: 'emerald', bg: 'bg-emerald-500', ring: 'ring-emerald-400/50 dark:ring-emerald-400/30' },
+  { value: 'violet', bg: 'bg-violet-500', ring: 'ring-violet-400/50 dark:ring-violet-400/30' },
+  { value: 'orange', bg: 'bg-orange-500', ring: 'ring-orange-400/50 dark:ring-orange-400/30' },
+  { value: 'rose', bg: 'bg-rose-500', ring: 'ring-rose-400/50 dark:ring-rose-400/30' },
+  { value: 'sky', bg: 'bg-sky-500', ring: 'ring-sky-400/50 dark:ring-sky-400/30' },
 ] as const
 
 const PRIORITY_OPTIONS: { value: MissionPriority; label: string; activeClass: string }[] = [
-  { value: 'low', label: 'Low', activeClass: 'bg-sky-500 text-white' },
-  { value: 'medium', label: 'Medium', activeClass: 'bg-amber-500 text-white' },
-  { value: 'high', label: 'High', activeClass: 'bg-orange-500 text-white' },
-  { value: 'critical', label: 'Critical', activeClass: 'bg-rose-500 text-white' },
+  { value: 'low', label: 'Low', activeClass: 'bg-sky-500 text-white shadow-sm shadow-sky-500/30 dark:shadow-sky-500/20' },
+  { value: 'medium', label: 'Medium', activeClass: 'bg-amber-500 text-white shadow-sm shadow-amber-500/30 dark:shadow-amber-500/20' },
+  { value: 'high', label: 'High', activeClass: 'bg-orange-500 text-white shadow-sm shadow-orange-500/30 dark:shadow-orange-500/20' },
+  { value: 'critical', label: 'Critical', activeClass: 'bg-rose-500 text-white shadow-sm shadow-rose-500/30 dark:shadow-rose-500/20' },
 ]
 
 const STATUS_OPTIONS: { value: MissionStatus; label: string; activeClass: string }[] = [
-  { value: 'draft', label: 'Draft', activeClass: 'bg-slate-500 text-white' },
-  { value: 'active', label: 'Aktif', activeClass: 'bg-blue-500 text-white' },
-  { value: 'completed', label: 'Selesai', activeClass: 'bg-emerald-500 text-white' },
-  { value: 'archived', label: 'Arsip', activeClass: 'bg-gray-500 text-white' },
+  { value: 'draft', label: 'Draft', activeClass: 'bg-slate-500 text-white shadow-sm shadow-slate-500/30 dark:shadow-slate-500/20' },
+  { value: 'active', label: 'Aktif', activeClass: 'bg-blue-500 text-white shadow-sm shadow-blue-500/30 dark:shadow-blue-500/20' },
+  { value: 'completed', label: 'Selesai', activeClass: 'bg-emerald-500 text-white shadow-sm shadow-emerald-500/30 dark:shadow-emerald-500/20' },
+  { value: 'archived', label: 'Arsip', activeClass: 'bg-gray-500 text-white shadow-sm shadow-gray-500/30 dark:shadow-gray-500/20' },
 ]
 
 const missionSchema = z.object({
@@ -128,10 +128,11 @@ export function MissionFormDialog({ open, onOpenChange, mission }: MissionFormDi
   }
 
   const inputBase = cn(
-    'flex w-full rounded-xl border border-[var(--c-border)] bg-[var(--c-card)] px-4 text-sm shadow-sm',
+    'flex w-full rounded-xl border border-[var(--c-border)] dark:border-white/10 bg-[var(--c-card)] dark:bg-white/[0.04] px-4 text-sm',
+    'shadow-sm dark:shadow-[0_2px_8px_rgba(0,0,0,0.2)]',
     'transition-all duration-200',
     'placeholder:text-[var(--c-text-muted)]',
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--c-accent)]/30 focus-visible:border-[var(--c-accent)]',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--c-accent)]/30 dark:focus-visible:ring-[var(--c-accent)]/20 focus-visible:border-[var(--c-accent)]',
   )
   const inputError = 'border-red-500 focus-visible:ring-red-500/30 focus-visible:border-red-500'
   const inputStyle = { color: 'var(--c-text)' }
@@ -140,17 +141,19 @@ export function MissionFormDialog({ open, onOpenChange, mission }: MissionFormDi
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="flex flex-col gap-0 overflow-hidden p-0 sm:max-w-[560px] max-h-[97dvh] sm:max-h-[92vh]">
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col flex-1 min-h-0">
-          {/* Header */}
-          <div className="flex-shrink-0 px-6 pt-6 pb-5 border-b border-[var(--c-border)]">
-            <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center shadow-lg shadow-blue-500/20 transition-all duration-300 flex-shrink-0">
-                <Target className="h-6 w-6 text-white" />
+          {/* Header — premium gradient accent */}
+          <div className="flex-shrink-0 px-6 pt-6 pb-5 border-b border-[var(--c-border)] dark:border-white/[0.08] relative overflow-hidden">
+            {/* Decorative background glow */}
+            <div className="absolute -top-10 -right-10 h-28 w-28 rounded-full bg-gradient-to-br from-blue-500/10 to-violet-500/10 dark:from-blue-500/5 dark:to-violet-500/5 blur-2xl pointer-events-none" />
+            <div className="relative flex items-center gap-4">
+              <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-blue-500 to-violet-600 dark:from-blue-400 dark:to-violet-500 flex items-center justify-center shadow-lg shadow-blue-500/20 dark:shadow-blue-500/10 transition-all duration-300 flex-shrink-0">
+                {isEditing ? <Pencil className="h-6 w-6 text-white" /> : <Sparkles className="h-6 w-6 text-white" />}
               </div>
               <div className="min-w-0">
-                <DialogTitle className="text-xl font-extrabold tracking-tight">
+                <DialogTitle className="text-xl font-extrabold tracking-tight text-[var(--c-text)]">
                   {isEditing ? 'Edit Mission' : 'Mission Baru'}
                 </DialogTitle>
-                <DialogDescription className="text-sm mt-0.5">
+                <DialogDescription className="text-sm mt-0.5 text-[var(--c-text-muted)]">
                   {isEditing ? 'Ubah detail mission kamu.' : 'Tetapkan tujuan besar yang ingin dicapai.'}
                 </DialogDescription>
               </div>
@@ -167,7 +170,7 @@ export function MissionFormDialog({ open, onOpenChange, mission }: MissionFormDi
               </label>
               <input type="text" placeholder="Contoh: Bangun Life OS" className={cn('h-12', inputBase, errors.title && inputError)} style={inputStyle} {...register('title')} />
               {errors.title && (
-                <p className="flex items-center gap-1 text-xs text-red-500 pl-1" role="alert">
+                <p className="flex items-center gap-1 text-xs text-red-500 dark:text-red-400 pl-1" role="alert">
                   <AlertCircle className="h-3 w-3 flex-shrink-0" />{errors.title.message}
                 </p>
               )}
@@ -186,7 +189,9 @@ export function MissionFormDialog({ open, onOpenChange, mission }: MissionFormDi
                 {PRIORITY_OPTIONS.map((opt) => (
                   <button key={opt.value} type="button" onClick={() => setValue('priority', opt.value)}
                     className={cn('py-2.5 text-xs font-semibold rounded-xl border-2 transition-all duration-200',
-                      selectedPriority === opt.value ? cn(opt.activeClass, 'border-transparent') : 'border-[var(--c-border)] text-[var(--c-text-muted)] hover:border-[var(--c-text-muted)]')}>
+                      selectedPriority === opt.value
+                        ? cn(opt.activeClass, 'border-transparent scale-[1.02]')
+                        : 'border-[var(--c-border)] dark:border-white/10 text-[var(--c-text-muted)] hover:border-[var(--c-text-muted)] dark:hover:border-white/20 dark:hover:bg-white/5')}>
                     {opt.label}
                   </button>
                 ))}
@@ -200,7 +205,9 @@ export function MissionFormDialog({ open, onOpenChange, mission }: MissionFormDi
                 {STATUS_OPTIONS.map((opt) => (
                   <button key={opt.value} type="button" onClick={() => setValue('status', opt.value)}
                     className={cn('py-2.5 text-xs font-semibold rounded-xl border-2 transition-all duration-200',
-                      selectedStatus === opt.value ? cn(opt.activeClass, 'border-transparent') : 'border-[var(--c-border)] text-[var(--c-text-muted)] hover:border-[var(--c-text-muted)]')}>
+                      selectedStatus === opt.value
+                        ? cn(opt.activeClass, 'border-transparent scale-[1.02]')
+                        : 'border-[var(--c-border)] dark:border-white/10 text-[var(--c-text-muted)] hover:border-[var(--c-text-muted)] dark:hover:border-white/20 dark:hover:bg-white/5')}>
                     {opt.label}
                   </button>
                 ))}
@@ -231,8 +238,8 @@ export function MissionFormDialog({ open, onOpenChange, mission }: MissionFormDi
                   <button key={value} type="button" onClick={() => setValue('icon', value)}
                     className={cn('h-10 w-10 rounded-xl flex items-center justify-center border-2 transition-all duration-200',
                       selectedIcon === value
-                        ? 'border-[var(--c-accent)] bg-[var(--c-accent)]/10 text-[var(--c-accent)]'
-                        : 'border-[var(--c-border)] text-[var(--c-text-muted)] hover:border-[var(--c-text-muted)]')}>
+                        ? 'border-[var(--c-accent)] bg-[var(--c-accent)]/10 dark:bg-[var(--c-accent)]/15 text-[var(--c-accent)] shadow-sm shadow-[var(--c-accent)]/10 scale-105'
+                        : 'border-[var(--c-border)] dark:border-white/10 text-[var(--c-text-muted)] hover:border-[var(--c-text-muted)] dark:hover:border-white/20 dark:hover:bg-white/5')}>
                     <Icon className="h-4.5 w-4.5" />
                   </button>
                 ))}
@@ -245,19 +252,21 @@ export function MissionFormDialog({ open, onOpenChange, mission }: MissionFormDi
               <div className="flex flex-wrap gap-2.5">
                 {COLOR_PRESETS.map((c) => (
                   <button key={c.value} type="button" onClick={() => setValue('color', c.value)}
-                    className={cn('h-8 w-8 rounded-full transition-all duration-200 ring-2 ring-offset-2 ring-offset-[var(--c-card)]',
+                    className={cn('h-8 w-8 rounded-full transition-all duration-200 ring-2 ring-offset-2 ring-offset-[var(--c-card)] dark:ring-offset-[var(--c-card)]',
                       c.bg,
-                      selectedColor === c.value ? 'ring-[var(--c-accent)] scale-110' : 'ring-transparent')} />
+                      selectedColor === c.value
+                        ? cn(c.ring, 'scale-110')
+                        : 'ring-transparent hover:scale-105')} />
                 ))}
               </div>
             </div>
           </div>
 
           {/* Fixed Footer */}
-          <div className="flex-shrink-0 border-t border-[var(--c-border)] px-6 py-4">
+          <div className="flex-shrink-0 border-t border-[var(--c-border)] dark:border-white/[0.08] px-6 py-4 bg-[var(--c-card)] dark:bg-[var(--c-card)]/80 dark:backdrop-blur-xl">
             <div className="flex items-center gap-3 justify-end">
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="rounded-xl h-11 px-5">Batal</Button>
-              <Button type="submit" loading={isSubmitting} className="rounded-xl h-11 px-6 shadow-lg shadow-blue-500/20">
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="rounded-xl h-11 px-5 border-[var(--c-border)] dark:border-white/10 dark:hover:bg-white/5">Batal</Button>
+              <Button type="submit" loading={isSubmitting} className="rounded-xl h-11 px-6 shadow-lg shadow-blue-500/20 dark:shadow-blue-500/10">
                 <Save className="h-4 w-4" />
                 {isEditing ? 'Simpan Perubahan' : 'Buat Mission'}
               </Button>
