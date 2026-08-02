@@ -44,9 +44,9 @@ export function DebtCard({ debt, onEdit, onDelete, onMarkPaid, onRecordPayment }
                 {debt.name}
               </h3>
               {debt.is_paid_off ? (
-                <Badge className="bg-emerald-500/10 text-emerald-600 text-[10px] px-1.5 py-0">Lunas</Badge>
+                <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] px-1.5 py-0">Lunas</Badge>
               ) : (
-                <Badge className="bg-amber-500/10 text-amber-600 text-[10px] px-1.5 py-0">Aktif</Badge>
+                <Badge className="bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[10px] px-1.5 py-0">Aktif</Badge>
               )}
             </div>
             {debt.creditor && (

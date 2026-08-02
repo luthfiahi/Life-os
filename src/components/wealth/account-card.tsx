@@ -26,7 +26,7 @@ export function AccountCard({ account, onEdit, onDelete }: AccountCardProps) {
 
   return (
     <div className={cn(
-      'group relative overflow-hidden rounded-2xl border border-[var(--c-border)] bg-white transition-all duration-200 hover:shadow-md hover:border-[var(--c-accent)]/20 dark:bg-[var(--c-card)]',
+      'group relative overflow-hidden rounded-2xl border border-[var(--c-border)] bg-[var(--c-card)] transition-all duration-200 hover:shadow-md hover:border-[var(--c-accent)]/20',
     )}>
       {/* Gradient accent strip */}
       <div className={cn('absolute top-0 left-0 right-0 h-1 bg-gradient-to-r opacity-80', gradientStrip)} />

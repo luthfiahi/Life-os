@@ -37,7 +37,7 @@ function SelectTrigger({
       data-slot="select-trigger"
       data-size={size}
       className={cn(
-        "flex w-full items-center justify-between gap-2 rounded-[var(--radius-md)] border border-[var(--c-border)] bg-white px-3 py-2 text-sm text-[var(--c-text)] shadow-sm outline-none transition-[color,box-shadow] dark:bg-[#2e333b] dark:text-[var(--c-text)]",
+        "flex w-full items-center justify-between gap-2 rounded-[var(--radius-md)] border border-[var(--c-border)] bg-[var(--c-card)] px-3 py-2 text-sm text-[var(--c-text)] shadow-sm outline-none transition-[color,box-shadow]",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--c-accent)]/30 focus-visible:border-[var(--c-accent)]",
         "placeholder:text-[var(--c-text-muted)]",
         "disabled:cursor-not-allowed disabled:opacity-50",
@@ -66,7 +66,7 @@ function SelectContent({
       <SelectPrimitive.Content
         data-slot="select-content"
         className={cn(
-          "bg-white dark:bg-[#2e333b] text-[var(--c-text)]",
+          "bg-[var(--c-card)] text-[var(--c-text)]",
           "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
           "data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
           "relative z-50 max-h-96 min-w-[8rem] overflow-x-hidden overflow-y-auto rounded-[var(--radius-lg)] border border-[var(--c-border)] shadow-[var(--shadow-modal)]",
