@@ -190,4 +190,23 @@ export const milestoneRepo = {
       completed: all.filter((m) => m.status === 'completed').length,
     }
   },
+
+  /** Batch count milestones for all missions of a user — single query */
+  async countGroupedByMission(userId: string): Promise<Record<string, { total: number; completed: number }>> {
+    const client = getClient()
+    if (!client) return {}
+    const { data, error } = await client
+      .from('milestones')
+      .select('mission_id, status')
+      .eq('user_id', userId)
+    if (error) throw new Error(`milestoneRepo.countGroupedByMission: ${error.message}`)
+    const result: Record<string, { total: number; completed: number }> = {}
+    for (const row of (data ?? [])) {
+      const mid = (row as { mission_id: string; status: string }).mission_id
+      if (!result[mid]) result[mid] = { total: 0, completed: 0 }
+      result[mid].total++
+      if ((row as { status: string }).status === 'completed') result[mid].completed++
+    }
+    return result
+  },
 }

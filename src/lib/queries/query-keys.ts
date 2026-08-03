@@ -103,7 +103,7 @@ export const missionKeys = {
 export function invalidateMissionQueries(
   queryClient: import('@tanstack/react-query').QueryClient,
   userId: string,
-  scopes: Array<'missions' | 'milestones' | 'snapshot'>,
+  scopes: Array<'missions' | 'milestones' | 'snapshot' | 'dashboard'>,
 ) {
   for (const scope of scopes) {
     switch (scope) {
@@ -116,11 +116,17 @@ export function invalidateMissionQueries(
       case 'snapshot':
         queryClient.invalidateQueries({ queryKey: missionKeys.snapshot(userId) })
         break
+      case 'dashboard':
+        queryClient.invalidateQueries({ queryKey: missionKeys.dashboard(userId) })
+        break
     }
   }
-  // Always invalidate snapshot when mission data changes
+  // Always invalidate snapshot and dashboard when mission data changes
   if (!scopes.includes('snapshot')) {
     queryClient.invalidateQueries({ queryKey: missionKeys.snapshot(userId) })
+  }
+  if (!scopes.includes('dashboard')) {
+    queryClient.invalidateQueries({ queryKey: missionKeys.dashboard(userId) })
   }
 }
 

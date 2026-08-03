@@ -3,13 +3,15 @@
 import { useState, useMemo } from 'react'
 import {
   Target, Plus, CalendarDays, Pin, TrendingUp, CheckCircle2, Rocket, Sparkles, LayoutDashboard,
+  Flame, Clock,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { useMissions, useDeleteMission, useUpdateMission } from '@/lib/queries/mission-queries'
+import { useMissions, useDeleteMission, useUpdateMission, useMissionDashboard, useMilestoneCountsByMission } from '@/lib/queries/mission-queries'
 import { MissionCard } from '@/components/mission/mission-card'
 import { MissionFormDialog } from '@/components/mission/mission-form-dialog'
 import { MissionDetailDrawer } from '@/components/mission/mission-detail-drawer'
 import { MissionDashboardView } from '@/components/mission/mission-dashboard-view'
+import { calculateMissionHealth, daysUntil } from '@/lib/services/mission.service'
 import type { MissionRow } from '@/lib/types/mission'
 
 // ─── Skeletons ───────────────────────────────────────────
@@ -34,7 +36,9 @@ function CardSkeleton() {
 }
 
 // ─── Stat Card (Premium) ─────────────────────────────────
-function StatCard({ label, value, icon: Icon, color, sub }: { label: string; value: string | number; icon: React.ElementType; color: string; sub?: string }) {
+function StatCard({ label, value, icon: Icon, color, sub, trend }: {
+  label: string; value: string | number; icon: React.ElementType; color: string; sub?: string; trend?: 'up' | 'down' | 'neutral'
+}) {
   return (
     <div className="rounded-2xl border border-[var(--c-border)] dark:border-white/[0.08] bg-[var(--c-card)] p-4 space-y-3 transition-all duration-300 hover:shadow-[var(--shadow-elevated)] dark:hover:shadow-[0_8px_32px_rgba(0,0,0,0.3)] hover:-translate-y-0.5 relative overflow-hidden">
       <div className={cn('absolute -top-6 -right-6 h-20 w-20 rounded-full blur-2xl opacity-30 dark:opacity-20 pointer-events-none', color)}></div>
@@ -45,9 +49,40 @@ function StatCard({ label, value, icon: Icon, color, sub }: { label: string; val
         {sub && (
           <span className={cn('text-[10px] font-bold px-1.5 py-0.5 rounded-md', sub)}>{value}</span>
         )}
+        {trend === 'up' && <TrendingUp className="h-4 w-4 text-emerald-500" />}
+        {trend === 'down' && <TrendingUp className="h-4 w-4 text-rose-500 rotate-180" />}
       </div>
       {!sub && <p className="text-2xl font-extrabold text-[var(--c-text)] tabular-nums tracking-tight leading-none relative">{value}</p>}
       <p className="text-[11px] text-[var(--c-text-muted)] font-medium relative">{label}</p>
+    </div>
+  )
+}
+
+// ─── Health Score Ring ────────────────────────────────────
+function HealthScoreRing({ score, label }: { score: number; label: string }) {
+  const radius = 28
+  const circumference = 2 * Math.PI * radius
+  const strokeDashoffset = circumference - (score / 100) * circumference
+  const color = score >= 70 ? 'text-emerald-500' : score >= 40 ? 'text-amber-500' : 'text-rose-500'
+  const strokeColor = score >= 70 ? 'stroke-emerald-500' : score >= 40 ? 'stroke-amber-500' : 'stroke-rose-500'
+
+  return (
+    <div className="rounded-2xl border border-[var(--c-border)] dark:border-white/[0.08] bg-[var(--c-card)] p-4 flex items-center gap-4 transition-all duration-300 hover:shadow-[var(--shadow-elevated)] dark:hover:shadow-[0_8px_32px_rgba(0,0,0,0.3)] hover:-translate-y-0.5">
+      <div className="relative h-[72px] w-[72px] shrink-0">
+        <svg className="h-full w-full -rotate-90" viewBox="0 0 72 72">
+          <circle cx="36" cy="36" r={radius} fill="none" stroke="var(--c-border)" strokeWidth="5" opacity="0.3" className="dark:stroke-white/10" />
+          <circle cx="36" cy="36" r={radius} fill="none" className={cn(strokeColor, 'transition-all duration-1000 ease-out')} strokeWidth="5" strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={strokeDashoffset} />
+        </svg>
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span className={cn('text-lg font-extrabold tabular-nums', color)}>{score}</span>
+        </div>
+      </div>
+      <div className="space-y-1">
+        <p className="text-sm font-bold text-[var(--c-text)]">{label}</p>
+        <p className="text-[11px] text-[var(--c-text-muted)] leading-relaxed">
+          {score >= 70 ? 'Mission kamu sehat!' : score >= 40 ? 'Beberapa perlu perhatian.' : 'Ada yang perlu segera ditangani.'}
+        </p>
+      </div>
     </div>
   )
 }
@@ -62,7 +97,6 @@ const STATUS_TABS = [
 ] as const
 
 type TabValue = typeof STATUS_TABS[number]['value']
-
 type ViewMode = 'missions' | 'dashboard'
 
 // ─── Main Page ───────────────────────────────────────────
@@ -75,18 +109,42 @@ export default function MissionPage() {
   const [drawerOpen, setDrawerOpen] = useState(false)
 
   const { data: allMissions, isLoading } = useMissions()
+  const { data: milestoneCounts } = useMilestoneCountsByMission()
   const deleteMission = useDeleteMission()
   const updateMission = useUpdateMission()
 
-  // Stats
+  // Enhanced stats with health data
   const stats = useMemo(() => {
-    if (!allMissions) return { total: 0, active: 0, completed: 0, progress: 0 }
+    if (!allMissions) return { total: 0, active: 0, completed: 0, progress: 0, overdue: 0, healthScore: 0, nextDeadline: null, totalMilestones: 0, completedMilestones: 0 }
     const active = allMissions.filter((m) => m.status === 'active')
     const completed = allMissions.filter((m) => m.status === 'completed')
     const progress = active.length > 0
       ? Math.round(active.reduce((s, m) => s + Number(m.progress), 0) / active.length)
       : 0
-    return { total: allMissions.length, active: active.length, completed: completed.length, progress }
+
+    // Health calculation
+    const overdue = active.filter((m) => {
+      if (!m.target_date) return false
+      return new Date(m.target_date + 'T23:59:59') < new Date()
+    }).length
+
+    // Health score: 100 base, -20 per overdue, -10 per at_risk, -5 per critical
+    let healthScore = 100
+    for (const m of active) {
+      const h = calculateMissionHealth(m)
+      if (h.health === 'overdue') healthScore -= 20
+      else if (h.health === 'critical') healthScore -= 15
+      else if (h.health === 'at_risk') healthScore -= 8
+    }
+    healthScore = Math.max(0, Math.min(100, healthScore))
+
+    // Find nearest deadline
+    const activeWithDeadlines = active
+      .filter((m) => m.target_date && daysUntil(m.target_date) !== null && daysUntil(m.target_date)! >= 0)
+      .sort((a, b) => (daysUntil(a.target_date) ?? 999) - (daysUntil(b.target_date) ?? 999))
+    const nextDeadline = activeWithDeadlines[0]?.target_date ?? null
+
+    return { total: allMissions.length, active: active.length, completed: completed.length, progress, overdue, healthScore, nextDeadline }
   }, [allMissions])
 
   // Filtered + sorted
@@ -135,7 +193,7 @@ export default function MissionPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-h1 text-[var(--c-text)]">Mission</h1>
-          <p className="text-sm text-[var(--c-text-muted)] mt-0.5">Kelola tujuan besar dan milestone-mu.</p>
+          <p className="text-sm text-[var(--c-text-muted)] mt-0.5">Project management pribadi — tujuan besar, milestone nyata.</p>
         </div>
         <button type="button" onClick={() => { setEditingMission(null); setFormOpen(true) }}
           className="h-10 px-5 rounded-xl bg-[var(--c-accent)] text-white text-sm font-bold shadow-lg shadow-[var(--c-accent)]/25 dark:shadow-[var(--c-accent)]/15 hover:shadow-xl hover:shadow-[var(--c-accent)]/30 hover:brightness-110 active:scale-[0.97] transition-all flex items-center gap-2">
@@ -144,13 +202,32 @@ export default function MissionPage() {
         </button>
       </div>
 
-      {/* Summary Stats — Premium with glow accents */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      {/* Summary Stats — Premium row with Health Score */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         <StatCard label="Total Mission" value={stats.total} icon={Target} color="bg-gradient-to-br from-blue-500 to-blue-600" />
         <StatCard label="Aktif" value={stats.active} icon={Rocket} color="bg-gradient-to-br from-emerald-500 to-emerald-600" />
-        <StatCard label="Selesai" value={stats.completed} icon={CheckCircle2} color="bg-gradient-to-br from-violet-500 to-violet-600" />
-        <StatCard label="Avg Progress" value={`${stats.progress}%`} icon={TrendingUp} color="bg-gradient-to-br from-orange-500 to-orange-600" />
+        <StatCard label="Selesai" value={stats.completed} icon={CheckCircle2} color="bg-gradient-to-br from-violet-500 to-violet-600" trend={stats.completed > 0 ? 'up' : undefined} />
+        <StatCard label="Avg Progress" value={`${stats.progress}%`} icon={TrendingUp} color="bg-gradient-to-br from-orange-500 to-orange-600" trend={stats.progress >= 50 ? 'up' : stats.progress > 0 ? 'neutral' : undefined} />
+        {stats.overdue > 0 && (
+          <StatCard label="Overdue" value={stats.overdue} icon={Flame} color="bg-gradient-to-br from-rose-500 to-rose-600" trend="down" />
+        )}
+        {stats.nextDeadline && (
+          <StatCard
+            label="Deadline Terdekat"
+            value={`${daysUntil(stats.nextDeadline) ?? 0}h`}
+            icon={CalendarDays}
+            color="bg-gradient-to-br from-sky-500 to-sky-600"
+          />
+        )}
       </div>
+
+      {/* Health Score Bar — only show when active missions exist */}
+      {stats.active > 0 && (
+        <HealthScoreRing
+          score={stats.healthScore}
+          label={stats.healthScore >= 70 ? 'Mission Health: Baik' : stats.healthScore >= 40 ? 'Mission Health: Perlu Perhatian' : 'Mission Health: Kritis'}
+        />
+      )}
 
       {/* View Mode Toggle + Status Tabs */}
       <div className="flex items-center gap-3">
@@ -228,6 +305,7 @@ export default function MissionPage() {
             <MissionCard
               key={mission.id}
               mission={mission}
+              milestoneCount={milestoneCounts?.[mission.id]}
               data-mission-id={mission.id}
               onClick={() => handleCardClick(mission)}
               onEdit={() => handleEdit(mission)}

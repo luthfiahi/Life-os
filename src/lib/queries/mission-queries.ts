@@ -94,7 +94,7 @@ export function useCreateMission() {
     mutationFn: (payload: MissionInsert) => missionRepo.create(payload),
     onSuccess: () => {
       if (user?.id) {
-        invalidateMissionQueries(queryClient, user.id, ['missions', 'snapshot'])
+        invalidateMissionQueries(queryClient, user.id, ['missions', 'snapshot', 'dashboard'])
       }
     },
   })
@@ -108,7 +108,7 @@ export function useUpdateMission() {
     mutationFn: ({ id, payload }: { id: string; payload: MissionUpdate }) => missionRepo.update(id, payload),
     onSuccess: () => {
       if (user?.id) {
-        invalidateMissionQueries(queryClient, user.id, ['missions', 'milestones', 'snapshot'])
+        invalidateMissionQueries(queryClient, user.id, ['missions', 'milestones', 'snapshot', 'dashboard'])
       }
     },
   })
@@ -122,13 +122,29 @@ export function useDeleteMission() {
     mutationFn: (id: string) => missionRepo.delete(id),
     onSuccess: () => {
       if (user?.id) {
-        invalidateMissionQueries(queryClient, user.id, ['missions', 'milestones', 'snapshot'])
+        invalidateMissionQueries(queryClient, user.id, ['missions', 'milestones', 'snapshot', 'dashboard'])
       }
     },
   })
 }
 
 // ─── Milestones ──────────────────────────────────────────
+
+/** Batch fetch milestone counts for all missions — 1 query */
+export function useMilestoneCountsByMission() {
+  const { user } = useAuth()
+  const userId = user?.id
+
+  return useQuery<Record<string, { total: number; completed: number }>>({
+    queryKey: userId ? [...missionKeys.milestones(userId), 'counts'] as const : ['mission', 'milestone-counts', 'anonymous'],
+    queryFn: async () => {
+      if (!userId) return {}
+      return milestoneRepo.countGroupedByMission(userId)
+    },
+    enabled: !!userId,
+    staleTime: 2 * 60 * 1000,
+  })
+}
 
 export function useMilestones(missionId: string | null) {
   const { user } = useAuth()
@@ -158,7 +174,7 @@ export function useCreateMilestone() {
     },
     onSuccess: () => {
       if (user?.id) {
-        invalidateMissionQueries(queryClient, user.id, ['missions', 'milestones', 'snapshot'])
+        invalidateMissionQueries(queryClient, user.id, ['missions', 'milestones', 'snapshot', 'dashboard'])
       }
     },
   })
@@ -180,7 +196,7 @@ export function useUpdateMilestone() {
     },
     onSuccess: () => {
       if (user?.id) {
-        invalidateMissionQueries(queryClient, user.id, ['missions', 'milestones', 'snapshot'])
+        invalidateMissionQueries(queryClient, user.id, ['missions', 'milestones', 'snapshot', 'dashboard'])
       }
     },
   })
@@ -201,7 +217,7 @@ export function useDeleteMilestone() {
     },
     onSuccess: () => {
       if (user?.id) {
-        invalidateMissionQueries(queryClient, user.id, ['missions', 'milestones', 'snapshot'])
+        invalidateMissionQueries(queryClient, user.id, ['missions', 'milestones', 'snapshot', 'dashboard'])
       }
     },
   })
