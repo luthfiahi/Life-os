@@ -160,7 +160,7 @@ export function buildAgenda(events: ScheduleEventRow[], date: string): AgendaIte
         timeLabel = formatTime(event.start_time)
       }
 
-      const isPast = date < today || (date === today && event.start_time && isTimePast(event.start_time) && !event.is_all_day)
+      const isPast = date < today || (date === today && !!event.start_time && isTimePast(event.start_time) && !event.is_all_day)
       const isNow = date === today && isTimeNow(event.start_time, event.end_time) && !event.is_all_day
 
       return { event, timeLabel, isPast, isNow }
@@ -171,6 +171,238 @@ export function buildAgenda(events: ScheduleEventRow[], date: string): AgendaIte
       if (a.event.start_time && b.event.start_time) return a.event.start_time.localeCompare(b.event.start_time)
       return 0
     })
+}
+
+// ─── Aggregation: Month data ────────────────────────
+
+export interface ScheduleMonthData {
+  year: number
+  month: number
+  days: ScheduleDaySummary[]
+  events: ScheduleEventRow[]
+  weekStarts: string[]
+}
+
+export function getMonthDays(year: number, month: number): string[] {
+  const days: string[] = []
+  const daysInMonth = new Date(year, month + 1, 0).getDate()
+  for (let d = 1; d <= daysInMonth; d++) {
+    const date = new Date(year, month, d)
+    days.push(date.toISOString().split('T')[0])
+  }
+  return days
+}
+
+export function getMonthCalendarGrid(year: number, month: number): (string | null)[] {
+  const firstDay = new Date(year, month, 1).getDay()
+  const offset = firstDay === 0 ? 6 : firstDay - 1 // Monday start
+  const daysInMonth = new Date(year, month + 1, 0).getDate()
+  const grid: (string | null)[] = []
+  for (let i = 0; i < offset; i++) grid.push(null)
+  for (let d = 1; d <= daysInMonth; d++) {
+    const date = new Date(year, month, d)
+    grid.push(date.toISOString().split('T')[0])
+  }
+  while (grid.length % 7 !== 0) grid.push(null)
+  return grid
+}
+
+export async function getScheduleMonth(userId: string, year: number, month: number): Promise<ScheduleMonthData> {
+  const daysInMonth = new Date(year, month + 1, 0).getDate()
+  const startDate = `${year}-${String(month + 1).padStart(2, '0')}-01`
+  const endDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(daysInMonth).padStart(2, '0')}`
+
+  const events = await scheduleRepo.findByDateRange(userId, startDate, endDate)
+  const allDays = getMonthDays(year, month)
+
+  const days: ScheduleDaySummary[] = allDays.map((date) => {
+    const dayEvents = events.filter((e) => e.event_date === date)
+    return {
+      date,
+      totalEvents: dayEvents.length,
+      completedEvents: dayEvents.filter((e) => e.is_completed).length,
+      allDayEvents: dayEvents.filter((e) => e.is_all_day).length,
+      timedEvents: dayEvents.filter((e) => !e.is_all_day).length,
+    }
+  })
+
+  // Get week starts for this month's calendar
+  const weekStarts: string[] = []
+  const firstDay = new Date(year, month, 1)
+  const start = getWeekStart(firstDay)
+  for (let w = 0; w < 6; w++) {
+    const d = new Date(start)
+    d.setDate(d.getDate() + w * 7)
+    const ds = d.toISOString().split('T')[0]
+    if (ds > endDate) break
+    weekStarts.push(ds)
+  }
+
+  return { year, month, days, events, weekStarts }
+}
+
+// ─── Aggregation: Day timeline for time blocking ───────
+
+export interface TimeBlock {
+  event: ScheduleEventRow
+  startMinutes: number
+  endMinutes: number
+  durationMinutes: number
+  top: string
+  height: string
+  isPast: boolean
+  isNow: boolean
+}
+
+export interface DayTimeline {
+  date: string
+  events: ScheduleEventRow[]
+  blocks: TimeBlock[]
+  freeSlots: { start: string; end: string; durationMin: number }[]
+  totalScheduledMin: number
+  totalFreeMin: number
+  utilizationPercent: number
+}
+
+const DAY_START = 5 * 60  // 05:00
+const DAY_END = 23 * 60   // 23:00
+const HOUR_HEIGHT = 72    // px per hour
+
+export function buildDayTimeline(events: ScheduleEventRow[], date: string): DayTimeline {
+  const timed = events.filter((e) => !e.is_all_day && e.start_time)
+  const allDay = events.filter((e) => e.is_all_day)
+  const today = getTodayStr()
+  const now = new Date()
+  const nowMin = now.getHours() * 60 + now.getMinutes()
+
+  const blocks: TimeBlock[] = timed.map((event) => {
+    const [sh, sm] = event.start_time!.split(':').map(Number)
+    const startMin = sh * 60 + sm
+    const endMin = event.end_time
+      ? (() => { const [eh, em] = event.end_time.split(':').map(Number); return eh * 60 + em })()
+      : startMin + 60
+    const duration = Math.max(15, endMin - startMin)
+    const clampedStart = Math.max(DAY_START, startMin)
+    const clampedEnd = Math.min(DAY_END, endMin)
+
+    return {
+      event,
+      startMinutes: startMin,
+      endMinutes: endMin,
+      durationMinutes: duration,
+      top: `${((clampedStart - DAY_START) / 60) * HOUR_HEIGHT}px`,
+      height: `${Math.max(20, ((clampedEnd - clampedStart) / 60) * HOUR_HEIGHT - 4)}px`,
+      isPast: date < today || (date === today && endMin <= nowMin),
+      isNow: date === today && startMin <= nowMin && endMin > nowMin,
+    }
+  }).sort((a, b) => a.startMinutes - b.startMinutes)
+
+  // Calculate free slots
+  const freeSlots: DayTimeline['freeSlots'] = []
+  let cursor = DAY_START
+  for (const block of blocks) {
+    if (block.startMinutes > cursor && block.startMinutes - cursor >= 30) {
+      freeSlots.push({
+        start: `${String(Math.floor(cursor / 60)).padStart(2, '0')}:${String(cursor % 60).padStart(2, '0')}`,
+        end: `${String(Math.floor(block.startMinutes / 60)).padStart(2, '0')}:${String(block.startMinutes % 60).padStart(2, '0')}`,
+        durationMin: block.startMinutes - cursor,
+      })
+    }
+    cursor = Math.max(cursor, block.endMinutes)
+  }
+  if (DAY_END - cursor >= 30) {
+    freeSlots.push({
+      start: `${String(Math.floor(cursor / 60)).padStart(2, '0')}:${String(cursor % 60).padStart(2, '0')}`,
+      end: '23:00',
+      durationMin: DAY_END - cursor,
+    })
+  }
+
+  const totalScheduledMin = blocks.reduce((s, b) => s + Math.min(b.durationMinutes, DAY_END - Math.max(b.startMinutes, DAY_START)), 0)
+  const totalFreeMin = Math.max(0, DAY_END - DAY_START - totalScheduledMin)
+  const utilizationPercent = Math.round((totalScheduledMin / (DAY_END - DAY_START)) * 100)
+
+  return {
+    date,
+    events,
+    blocks,
+    freeSlots,
+    totalScheduledMin,
+    totalFreeMin,
+    utilizationPercent,
+  }
+}
+
+export { HOUR_HEIGHT, DAY_START, DAY_END }
+
+// ─── Dashboard Analytics ────────────────────────────────
+
+export interface ScheduleAnalytics {
+  totalWeek: number
+  completedWeek: number
+  completionRate: number
+  byCategory: { category: string; count: number; completed: number }[]
+  busiestDay: string
+  busiestDayCount: number
+  avgEventsPerDay: number
+  todayUtilization: number
+  upcomingCount: number
+}
+
+export async function getScheduleAnalytics(userId: string): Promise<ScheduleAnalytics> {
+  const today = getTodayStr()
+  const weekStart = getWeekStart(new Date())
+  const weekEnd = new Date(weekStart)
+  weekEnd.setDate(weekEnd.getDate() + 6)
+  const weekEndStr = weekEnd.toISOString().split('T')[0]
+
+  const weekEvents = await scheduleRepo.findByDateRange(userId, weekStart.toISOString().split('T')[0], weekEndStr)
+  const upcoming = await scheduleRepo.findUpcoming(userId, 50)
+
+  const totalWeek = weekEvents.length
+  const completedWeek = weekEvents.filter((e) => e.is_completed).length
+  const completionRate = totalWeek > 0 ? Math.round((completedWeek / totalWeek) * 100) : 0
+
+  // Category breakdown
+  const catMap = new Map<string, { count: number; completed: number }>()
+  for (const e of weekEvents) {
+    const c = catMap.get(e.category) ?? { count: 0, completed: 0 }
+    c.count++
+    if (e.is_completed) c.completed++
+    catMap.set(e.category, c)
+  }
+  const byCategory = Array.from(catMap.entries()).map(([category, data]) => ({ category, ...data }))
+
+  // Busiest day
+  const dayCounts = new Map<string, number>()
+  for (const e of weekEvents) {
+    dayCounts.set(e.event_date, (dayCounts.get(e.event_date) ?? 0) + 1)
+  }
+  let busiestDay = today
+  let busiestDayCount = 0
+  for (const [date, count] of dayCounts) {
+    if (count > busiestDayCount) { busiestDay = date; busiestDayCount = count }
+  }
+
+  const avgEventsPerDay = totalWeek > 0 ? Math.round(totalWeek / 7) : 0
+
+  // Today utilization
+  const todayEvents = weekEvents.filter((e) => e.event_date === today && !e.is_all_day && e.start_time)
+  let todayScheduled = 0
+  for (const e of todayEvents) {
+    const [sh, sm] = e.start_time!.split(':').map(Number)
+    const [eh, em] = e.end_time ? e.end_time.split(':').map(Number) : [sh + 1, sm]
+    todayScheduled += Math.max(0, (eh * 60 + em) - (sh * 60 + sm))
+  }
+  const todayUtilization = Math.min(100, Math.round((todayScheduled / (DAY_END - DAY_START)) * 100))
+
+  const upcomingCount = upcoming.filter((e) => !e.is_completed).length
+
+  return {
+    totalWeek, completedWeek, completionRate, byCategory,
+    busiestDay, busiestDayCount, avgEventsPerDay,
+    todayUtilization, upcomingCount,
+  }
 }
 
 // ─── Snapshot for dashboard ────────────────────────────

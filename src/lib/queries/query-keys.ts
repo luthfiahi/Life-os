@@ -113,13 +113,21 @@ export const scheduleKeys = {
   week: (userId: string, weekStart: string) =>
     [...scheduleKeys.all, 'week', userId, weekStart] as const,
 
+  month: (userId: string, year: number, month: number) =>
+    [...scheduleKeys.all, 'month', userId, year, month] as const,
+
+  dayTimeline: (userId: string, date: string) =>
+    [...scheduleKeys.all, 'day', userId, date] as const,
+
+  analytics: (userId: string) => [...scheduleKeys.all, 'analytics', userId] as const,
+
   snapshot: (userId: string) => [...scheduleKeys.all, 'snapshot', userId] as const,
 }
 
 export function invalidateScheduleQueries(
   queryClient: import('@tanstack/react-query').QueryClient,
   userId: string,
-  scopes: Array<'events' | 'week' | 'snapshot'> = ['events', 'week', 'snapshot'],
+  scopes: Array<'events' | 'week' | 'month' | 'day' | 'analytics' | 'snapshot'> = ['events', 'week', 'month', 'day', 'analytics', 'snapshot'],
 ) {
   for (const scope of scopes) {
     switch (scope) {
@@ -127,12 +135,28 @@ export function invalidateScheduleQueries(
         queryClient.invalidateQueries({ queryKey: scheduleKeys.events(userId) })
         break
       case 'week':
-        queryClient.invalidateQueries({ queryKey: [scheduleKeys.all, userId] })
+        queryClient.invalidateQueries({ queryKey: [scheduleKeys.all, 'week', userId] })
+        break
+      case 'month':
+        queryClient.invalidateQueries({ queryKey: [scheduleKeys.all, 'month', userId] })
+        break
+      case 'day':
+        queryClient.invalidateQueries({ queryKey: [scheduleKeys.all, 'day', userId] })
+        break
+      case 'analytics':
+        queryClient.invalidateQueries({ queryKey: scheduleKeys.analytics(userId) })
         break
       case 'snapshot':
         queryClient.invalidateQueries({ queryKey: scheduleKeys.snapshot(userId) })
         break
     }
+  }
+  // Always cascade to snapshot + analytics
+  if (!scopes.includes('snapshot')) {
+    queryClient.invalidateQueries({ queryKey: scheduleKeys.snapshot(userId) })
+  }
+  if (!scopes.includes('analytics')) {
+    queryClient.invalidateQueries({ queryKey: scheduleKeys.analytics(userId) })
   }
 }
 

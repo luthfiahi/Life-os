@@ -5,12 +5,18 @@ import {
 } from '@tanstack/react-query'
 import { useAuth } from '@/hooks/use-auth'
 import { scheduleRepo } from '@/lib/repositories/schedule.repository'
-import { getScheduleWeek, getScheduleSnapshot, getTodayStr, getWeekStart } from '@/lib/services/schedule.service'
+import {
+  getScheduleWeek, getScheduleSnapshot, getScheduleMonth, getScheduleAnalytics,
+  getTodayStr, getWeekStart, buildDayTimeline,
+} from '@/lib/services/schedule.service'
 import { scheduleKeys, invalidateScheduleQueries } from './query-keys'
 import type {
   ScheduleEventInsert, ScheduleEventUpdate,
   ScheduleWeekData,
 } from '@/lib/types/schedule'
+import type {
+  ScheduleMonthData, DayTimeline, ScheduleAnalytics,
+} from '@/lib/services/schedule.service'
 
 // ─── Week View ──────────────────────────────────────────
 
@@ -31,6 +37,48 @@ export function useScheduleWeek(referenceDate?: string) {
         return { weekStart: days[0], weekEnd: days[6], days: days.map(d => ({ date: d, totalEvents: 0, completedEvents: 0, allDayEvents: 0, timedEvents: 0 })), events: [] }
       }
       return getScheduleWeek(userId, refDate)
+    },
+    enabled: !!userId,
+    staleTime: 30 * 1000,
+  })
+}
+
+// ─── Month View ─────────────────────────────────────────
+
+export function useScheduleMonth(year: number, month: number) {
+  const { user } = useAuth()
+  const userId = user?.id
+
+  return useQuery<ScheduleMonthData>({
+    queryKey: userId ? scheduleKeys.month(userId, year, month) : ['schedule', 'month', 'anonymous'],
+    queryFn: async () => {
+      if (!userId) {
+        return { year, month, days: [], events: [], weekStarts: [] }
+      }
+      return getScheduleMonth(userId, year, month)
+    },
+    enabled: !!userId,
+    staleTime: 60 * 1000,
+  })
+}
+
+// ─── Day Timeline (Time Blocking) ───────────────────────
+
+export function useDayTimeline(date: string) {
+  const { user } = useAuth()
+  const userId = user?.id
+
+  return useQuery<DayTimeline>({
+    queryKey: userId ? scheduleKeys.dayTimeline(userId, date) : ['schedule', 'day', 'anonymous'],
+    queryFn: async () => {
+      if (!userId) {
+        return {
+          date, events: [], blocks: [], freeSlots: [],
+          totalScheduledMin: 0, totalFreeMin: 0, utilizationPercent: 0,
+        }
+      }
+      const events = await scheduleRepo.findByDate(userId, date)
+      return buildDayTimeline(events, date)
     },
     enabled: !!userId,
     staleTime: 30 * 1000,
@@ -72,7 +120,30 @@ export function useUpcomingEvents(limit = 20) {
   })
 }
 
-// ─── Schedule Snapshot (Dashboard) ─────────────────────
+// ─── Schedule Analytics (Dashboard) ─────────────────────
+
+export function useScheduleAnalytics() {
+  const { user } = useAuth()
+  const userId = user?.id
+
+  return useQuery<ScheduleAnalytics>({
+    queryKey: userId ? scheduleKeys.analytics(userId) : ['schedule', 'analytics', 'anonymous'],
+    queryFn: async () => {
+      if (!userId) {
+        return {
+          totalWeek: 0, completedWeek: 0, completionRate: 0,
+          byCategory: [], busiestDay: '', busiestDayCount: 0,
+          avgEventsPerDay: 0, todayUtilization: 0, upcomingCount: 0,
+        }
+      }
+      return getScheduleAnalytics(userId)
+    },
+    enabled: !!userId,
+    staleTime: 2 * 60 * 1000,
+  })
+}
+
+// ─── Schedule Snapshot (Dashboard Home) ─────────────────
 
 export function useScheduleSnapshot() {
   const { user } = useAuth()
