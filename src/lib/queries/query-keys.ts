@@ -97,6 +97,45 @@ export const missionKeys = {
   dashboard: (userId: string) => [...missionKeys.all, 'dashboard', userId] as const,
 }
 
+// ─── Schedule Domain (Sprint 7) ────────────────────────────
+
+export const scheduleKeys = {
+  all: ['schedule'] as const,
+
+  events: (userId: string) => [...scheduleKeys.all, 'events', userId] as const,
+  eventsByDateRange: (userId: string, start: string, end: string) =>
+    [...scheduleKeys.events(userId), 'range', start, end] as const,
+  eventsByDate: (userId: string, date: string) =>
+    [...scheduleKeys.events(userId), 'date', date] as const,
+  upcoming: (userId: string) =>
+    [...scheduleKeys.events(userId), 'upcoming'] as const,
+
+  week: (userId: string, weekStart: string) =>
+    [...scheduleKeys.all, 'week', userId, weekStart] as const,
+
+  snapshot: (userId: string) => [...scheduleKeys.all, 'snapshot', userId] as const,
+}
+
+export function invalidateScheduleQueries(
+  queryClient: import('@tanstack/react-query').QueryClient,
+  userId: string,
+  scopes: Array<'events' | 'week' | 'snapshot'> = ['events', 'week', 'snapshot'],
+) {
+  for (const scope of scopes) {
+    switch (scope) {
+      case 'events':
+        queryClient.invalidateQueries({ queryKey: scheduleKeys.events(userId) })
+        break
+      case 'week':
+        queryClient.invalidateQueries({ queryKey: [scheduleKeys.all, userId] })
+        break
+      case 'snapshot':
+        queryClient.invalidateQueries({ queryKey: scheduleKeys.snapshot(userId) })
+        break
+    }
+  }
+}
+
 /**
  * Invalidation helpers for Mission domain.
  */
